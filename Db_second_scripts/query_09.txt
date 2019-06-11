@@ -1,0 +1,833 @@
+
+/*
+	Group No:09
+	Group Members: Anuj Budha Magar, Amrit Thapa, Pratima Dahal, Swastika Adhikari
+	Script: Query Script
+	Module : csy2038 - Database 2
+	Module Tutor: Sangita Satyal
+	Path: @E:\DatabaseYEAR2\assignment\query_09.txt
+*/
+ 
+ --FORMATTING COLUMN SIZE
+COLUMN festival_name FORMAT A25;
+COLUMN staff_firstname FORMAT A15;
+COLUMN staff_surname FORMAT A15;
+
+--VIEWING SEQUENCE
+SELECT sequence_name
+FROM user_sequences;
+	
+--VIEWING TABLE
+SELECT * FROM TAB;
+		
+--VIEWING CONSTRAINST
+SELECT constraint_name
+FROM user_constraints;
+	
+SELECT constraint_name
+FROM user_constraints
+WHERE constraint_name
+LIKE 'PK%'; 
+	
+SELECT constraint_name
+FROM user_constraints
+WHERE constraint_name
+LIKE 'FK%'; 
+	
+SELECT constraint_name
+FROM user_constraints
+WHERE constraint_name
+LIKE 'UC%'; 
+	
+SELECT constraint_name
+FROM user_constraints
+WHERE constraint_name
+LIKE 'CK%'; 
+
+--VIEWING THE DATA FROM THE TABLES
+/*
+SELECT * FROM staff;
+
+SELECT * FROM festival_nature;
+
+SELECT * FROM locations;
+
+SELECT * FROM festivals;
+
+SELECT * FROM festival_staff;
+
+SELECT * FROM addresses;
+*/
+
+--DISPLAY DETAILS OF STAFF WHO ARE HIRED BEFORE THEIR LEADER
+SELECT s.staff_id, s.staff_firstname, staff_surname FROM staff s
+WHERE exists(
+	SELECT staff_id FROM staff l
+	WHERE leader IS NOT NULL
+	AND s.leader = l.leader
+	AND s.staff_hire_date>l.staff_hire_date);
+	
+--DISPLAYING THE SELECTED FIELDS FROM TABLES
+--DESCRIBING STAFF TABLE
+DESC staff;
+
+--QUERYING USING SIMPLE METHOD
+--QUERYING THE STAFF'S NAME AND SALARY WHO SURNAME IS NOT EQUAL TO SHARMA
+SELECT staff_firstname,staff_surname,to_char(staff_salary,'999999D99') Salary
+FROM staff
+WHERE staff_surname != 'SHARMA';
+/*
+STAFF_FIRSTNAME STAFF_SURNAME   SALARY
+--------------- --------------- ----------
+PRATIMA         DAHAL             20002.00
+SWASTIKA        ADHIKARI          30003.00
+NITU            DAS               50005.00
+DIKSHYA         GHALE             40004.00
+SARENA          DAHAL             60006.00
+CHRIS           HEMSWORTH         50005.00
+*/
+
+--DESCRIBING FESTIVALS TABLE
+DESC festivals;
+
+--QUERYING THE FESTIVALS TABLE USING NOT LIKE AND 
+SELECT festival_name FROM festivals
+WHERE location_id <> 5001
+AND occuring_date NOT LIKE '%2018';
+/*
+FESTIVAL_NAME
+-----------------------------------
+ROBOT SHOWING COMPETITION
+FOOD FESTIVAL
+VIDEO GAMES
+VIDEO GAMES
+BEER FESTIVAL
+*/
+
+--DESCRIBING STAFF TABLE
+DESC staff;
+
+--QUERYING FESTIVAL NATURE ID WHERE FESTIVAL TYPE IS NULL
+SELECT fn.festival_nature_id
+FROM festival_nature fn
+WHERE fn.festival_type IS NULL;
+--no rows selected
+
+COLUMN location_address FORMAT A60
+--QUERYING THE LOCATIONS TABLE USING POOR METHOD
+SELECT location_id,location_address
+FROM locations;
+/*
+LOCATION_ID LOCATION_ADDRESS(COUNTRY, CITY, STREET)
+----------- ------------------------------------------------------------
+       5000 ADDRESS_TYPE('NEPAL', 'KATHMANDU', 'PUSPANJALI MARG')
+       5001 ADDRESS_TYPE('NEPAL', 'POKHARA', 'XYZ STREET')
+       5002 ADDRESS_TYPE('NEPAL', 'LUMBINI', 'ABC MARG')
+       5003 ADDRESS_TYPE('NEPAL', 'KATHMANDU', 'KAPAN')
+       5004 ADDRESS_TYPE('NEPAL', 'DANG', 'MARG')
+       5005 ADDRESS_TYPE('NEPAL', 'POKHARA', 'PRITHVI MARG')
+       5006 ADDRESS_TYPE('NEPAL', 'KATHMANDU', 'PRITHVI MARG')
+       5007 ADDRESS_TYPE('NEPAL', 'DANG', 'VALLEY-TOP MARG')
+
+8 rows selected.
+*/
+ 
+ 
+ --QUERYING the locations table using better method to show site_id and state_ref
+ SELECT l.location_address.city,l.location_id
+ FROM locations l;
+ 
+ COLUMN staff_address FORMAT A30
+--QUERYING THE LOCATIONS TABLE USING POOR METHOD
+SELECT staff_id,staff_firstname,staff_address
+FROM staff;
+/*
+  STAFF_ID STAFF_FIRSTNAME
+---------- --------------------
+STAFF_ADDRESS
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------
+      1008 SARENA
+0000220208999BBA2C717B494F9E9090D079476740DDDCF916BCDD4A179BC140815AE79DA0
+
+      1010 CHRIS
+00002202080BFADDC91D124E2989AEA58FBDB0F072DDDCF916BCDD4A179BC140815AE79DA0
+*/
+
+COLUMN staff_address FORMAT A40
+--QUERYING THE STAFF TABLE USING BETTER METHOD 
+SELECT staff_id,staff_firstname,deref(staff_address) staff_address
+FROM staff;
+/*
+  STAFF_ID STAFF_FIRSTNAME
+---------- --------------------
+DEREF(STAFF_ADDRESS)(COUNTRY, CITY, STREET)
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------
+      1008 SARENA
+ADDRESS_TYPE('NEPAL', 'DANG', 'MARG')
+
+      1010 CHRIS
+ADDRESS_TYPE('INDIA', 'HP', '17 AVENUE')
+*/
+
+--QUERYING THE STAFF TABLE USING BETTER METHOD WITH MINUS
+SELECT staff_firstname,staff_surname,deref(staff_address).country
+FROM staff
+MINUS
+SELECT staff_firstname,staff_surname,deref(staff_address).country
+FROM staff
+WHERE deref(staff_address).country != 'NEPAL';
+/*
+STAFF_FIRSTNAME      STAFF_SURNAME        DEREF(STAFF_ADDRESS).COUN
+-------------------- -------------------- -------------------------
+DIKSHYA              GHALE                NEPAL
+NITU                 DAS                  NEPAL
+PRATIMA              DAHAL                NEPAL
+SARENA               DAHAL                NEPAL
+SWASTIKA             ADHIKARI             NEPAL
+*/
+
+
+COLUMN street FORMAT A20
+COLUMN city FORMAT A20
+--QUERYING THE STAFF TABLE USING BEST METHOD 
+SELECT DISTINCT(s.staff_id),s.staff_firstname,s.staff_address.country country, 
+s.staff_address.city city,s.staff_address.street street,soc.social_media_username
+FROM staff s,TABLE(s.social_media_used) soc;
+/*
+
+  STAFF_ID STAFF_FIRSTNAME      COUNTRY                   CITY                 STREET               SOCIAL_MEDIA_USERNAME
+---------- -------------------- ------------------------- -------------------- -------------------- --------------------------------------------------
+      1010 CHRIS                INDIA                     HP                   17 AVENUE            H.CHRIS
+      1004 NITU                 NEPAL                     POKHARA              XYZ STREET           NITUD
+      1006 DIKSHYA              NEPAL                     LUMBINI              ABC MARG             DIKSHYA
+      1000 PRATIMA              NEPAL                     KATHMANDU            KAPAN                DPRATIMA
+      1008 SARENA               NEPAL                     DANG                 MARG                 DSARENA
+      1010 CHRIS                INDIA                     HP                   17 AVENUE            HEMS.CHRIS
+      1012 SCARLETT             NEPAL                     POKHARA              XYZ STREET           SC.EVANS
+      1012 SCARLETT             NEPAL                     POKHARA              XYZ STREET           SCAR.JOHAN
+      1002 SWASTIKA             NEPAL                     KATHMANDU            PUSPANJALI MARG      ASWASTIKA
+      1004 NITU                 NEPAL                     POKHARA              XYZ STREET           DNITU
+      1002 SWASTIKA             NEPAL                     KATHMANDU            PUSPANJALI MARG      SWASTIKAA
+
+  STAFF_ID STAFF_FIRSTNAME      COUNTRY                   CITY                 STREET               SOCIAL_MEDIA_USERNAME
+---------- -------------------- ------------------------- -------------------- -------------------- --------------------------------------------------
+      1006 DIKSHYA              NEPAL                     LUMBINI              ABC MARG             GDIKKU
+      1000 PRATIMA              NEPAL                     KATHMANDU            KAPAN                PRATIMAD
+      1008 SARENA               NEPAL                     DANG                 MARG                 SARENAD
+*/
+
+--DESCRIBING FESTIVALS TABLE
+DESC festivals;
+
+--QUERYING THE FESTIVALS TABLE USING INNER JOIN AND ORDER BY
+SELECT f.festival_name, f.occuring_date, fn.festival_type
+FROM festivals f
+INNER JOIN festival_nature fn ON 
+f.festival_nature_id = fn.festival_nature_id
+ORDER BY f.festival_name;
+/*
+FESTIVAL_NAME                       OCCURING_DATE        FESTIVAL_TYPE
+----------------------------------- -------------------- --------------------------------------------------
+BEER FESTIVAL                       29-JAN-19            MUSICAL
+CONCERT                             29-OCT-19            MEALS,EATING AND DRINKING
+FOOD FESTIVAL                       19-MAR-19            GAMES
+ROBOT SHOWING COMPETITION           29-OCT-19            EXHIBITION
+VIDEO GAMES                         26-APR-19            PARTIES
+VIDEO GAMES                         26-APR-19            PARTIES
+*/
+
+
+--DESCRIBING FESTIVALS TABLE
+DESC festivals;
+
+COLUMN festival_name FORMAT A25;
+COLUMN festival_type FORMAT A25;
+--QUERYING THE FESTIVALS TABLE USING INNER JOIN,JOIN AND ORDER BY
+SELECT f.festival_name festival_name, f.occuring_date, fn.festival_type festival_type, l.location_address.country country,l.location_address.city city, l.location_address.street 
+street 
+FROM festivals f
+INNER JOIN festival_nature fn ON 
+f.festival_nature_id = fn.festival_nature_id
+JOIN locations l ON
+f.location_id = l.location_id
+ORDER BY f.festival_name;
+/*
+FESTIVAL_NAME                       OCCURING_DATE        FESTIVAL_TYPE
+                    COUNTRY              CITY                 STREET
+----------------------------------- -------------------- -------------------------------------------------- -------------------- -------------------- --------------------
+BEER FESTIVAL                       29-JAN-19            MUSICAL
+                    NEPAL                KATHMANDU            PUSPANJALI MARG
+CONCERT                             29-OCT-19            MEALS,EATING AND DRINKING
+                    NEPAL                POKHARA              XYZ STREET
+FOOD FESTIVAL                       19-MAR-19            GAMES
+                    NEPAL                LUMBINI              ABC MARG
+ROBOT SHOWING COMPETITION           29-OCT-19            EXHIBITION
+                    NEPAL                KATHMANDU            PUSPANJALI MARG
+VIDEO GAMES                         26-APR-19            PARTIES
+                    NEPAL                DANG                 MARG
+VIDEO GAMES                         26-APR-19            PARTIES
+                    NEPAL                KATHMANDU            KAPAN
+*/
+
+--DESCRIBING LOCATIONS TABLE
+DESC locations;
+
+--QUERYING ALL FESTIVALS CELEBRATED AT KATHMANDU CITY
+SELECT f.festival_name
+FROM festivals f
+WHERE f.location_id  IN (
+	SELECT l.location_id
+	FROM locations l
+	WHERE l.location_address.city = 'KATHMANDU');
+	/*
+	FESTIVAL_NAME
+-----------------------------------
+ROBOT SHOWING COMPETITION
+BEER FESTIVAL
+VIDEO GAMES
+	*/
+	
+--QUERYING ALL STAFF ORGANIZING FESTIVALS USING FULL OUTER JOIN AND ON 
+SELECT f.festival_name,s.staff_firstname,s.staff_surname
+FROM festivals f
+FULL OUTER JOIN festival_staff ff
+ON f.festival_nature_id = ff.festival_nature_id
+FULL OUTER JOIN staff s
+ON ff.staff_id = s.staff_id;
+/*
+FESTIVAL_NAME                       STAFF_FIRSTNAME      STAFF_SURNAME
+----------------------------------- -------------------- --------------------
+                                    CHRIS                HEMSWORTH
+                                    CHRIS                HEMSWORTH
+ROBOT SHOWING COMPETITION           PRATIMA              DAHAL
+CONCERT                             SWASTIKA             ADHIKARI
+FOOD FESTIVAL                       NITU                 DAS
+VIDEO GAMES                         DIKSHYA              GHALE
+VIDEO GAMES                         DIKSHYA              GHALE
+VIDEO GAMES                         SARENA               DAHAL
+VIDEO GAMES                         SARENA               DAHAL
+                                    CHRIS                HEMSWORTH
+BEER FESTIVAL
+*/
+
+--QUERYING ALL FESTIVAL TYPE HELD ON COUNTRY NEPAL
+SELECT ff.festival_type
+FROM festival_nature ff
+WHERE ff.festival_nature_id  IN (
+	SELECT f.festival_nature_id
+	FROM festivals f
+	WHERE f.location_id IN(
+	SELECT l.location_id
+	FROM locations l
+	WHERE l.location_address.country ='NEPAL'));
+	/*
+	FESTIVAL_TYPE
+--------------------------------------------------
+EXHIBITION
+MEALS,EATING AND DRINKING
+GAMES
+PARTIES
+MUSICAL
+	*/
+
+	
+--DESCRIBING THE STAFF TABLE
+DESC staff;
+
+--QUERYING THE ADDRESS WHERE STAFF IS NOT AVAILABLE
+SELECT * FROM addresses a
+WHERE REF(a) NOT IN(
+SELECT s.staff_address
+FROM staff s
+);
+/*
+no rows selected
+*/
+
+SET LINESIZE 180;
+--QUERYING  ALL 
+SELECT ff.festival_type,f.festival_name
+FROM festival_nature ff
+FULL OUTER JOIN festivals f
+ON ff.festival_nature_id = f.festival_nature_id
+WHERE ff.festival_nature_id  IN (
+	SELECT f.festival_nature_id
+	FROM festivals f
+	WHERE f.location_id IN(
+		SELECT l.location_id
+		FROM locations l
+		WHERE l.location_address.country IN(
+			SELECT s.staff_address.country Country
+			FROM staff s
+			WHERE s.staff_address.country = 'NEPAL'
+			AND s.staff_address.city ='KATHMANDU'
+			UNION
+			SELECT l.location_address.country Country
+			FROM locations l
+			WHERE l.location_address.country = 'NEPAL'
+		)
+	)
+);
+/*
+FESTIVAL_TYPE                                      FESTIVAL_NAME
+-------------------------------------------------- --------------------------------------------------
+GAMES                                              FOOD FESTIVAL
+EXHIBITION                                         ROBOT SHOWING COMPETITION
+MUSICAL                                            BEER FESTIVAL
+MEALS,EATING AND DRINKING                          CONCERT
+PARTIES                                            VIDEO GAMES
+PARTIES                                            VIDEO GAMES
+
+6 rows selected.
+*/
+
+--VIEWING STAFF_FIRSTNAME,STAFF_ID,LOCATION USING LEFT OUTER AND INNER JOIN
+SELECT s.staff_id,s.staff_firstname,l.location_address.country Country
+FROM staff s
+LEFT OUTER JOIN(
+festival_staff ff INNER JOIN festivals f
+ON ff.festival_nature_id = f.festival_nature_id
+AND ff.location_id = f.location_id
+JOIN locations l
+ON l.location_id = f.location_id
+)
+ON s.staff_id = ff.staff_id;
+
+/*
+  STAFF_ID STAFF_FIRSTNAME                COUNTRY
+---------- ------------------------------ --------------------
+      1000 PRATIMA                        NEPAL
+      1002 SWASTIKA                       NEPAL
+      1004 NITU                           NEPAL
+      1006 DIKSHYA                        NEPAL
+      1008 SARENA                         NEPAL
+      1010 CHRIS
+      1040 CHRIS
+      1042 CHRIS
+
+8 rows selected.
+*/
+
+
+--VIEWING FESTIVAL NAME AND OCCURING DATE OF NEPAL ONLY USING EXISTS KEYWORD
+SELECT f.festival_name, f.occuring_date
+FROM festivals f
+WHERE EXISTS(
+	SELECT location_id
+	FROM locations l
+	WHERE l.location_address.country = 'NEPAL'
+	);
+	
+/*
+FESTIVAL_NAME                                      OCCURING_DATE
+-------------------------------------------------- --------------------
+ROBOT SHOWING COMPETITION                          29-OCT-19
+CONCERT                                            29-OCT-19
+FOOD FESTIVAL                                      19-MAR-19
+VIDEO GAMES                                        26-APR-19
+VIDEO GAMES                                        26-APR-19
+BEER FESTIVAL                                      29-JAN-19
+
+6 rows selected.
+*/
+----------------------------------------------------
+
+	-- USING WHERE CONDITION AND TABLE ALIAS
+	SELECT s.staff_firstname,s.staff_surname
+	FROM staff s
+	WHERE s.staff_address.city IN ('KATHMANDU' , 'POKHARA');
+/*
+STAFF_FIRSTNAME                STAFF_SURNAME
+------------------------------ ------------------------------
+PRATIMA                        DAHAL
+SWASTIKA                       ADHIKARI
+NITU                           DAS
+*/	
+--not between like null desc asc join with order function like count,sum etc 
+
+
+--SHOWS STAFFS TABLE WITH THE GIVEN ATTRIBUTES IN THE GIVEN CONDITION.
+SELECT staff_id,staff_firstname,staff_surname,staff_hire_date
+FROM staff 
+WHERE staff_hire_date > '1-JAN-2012'
+AND staff_hire_date < SYSDATE ;
+/*
+  STAFF_ID STAFF_FIRSTNAME                STAFF_SURNAME                  STAFF_HIR
+---------- ------------------------------ ------------------------------ ---------
+      1040 CHRIS                          HEMSWORTH                      15-APR-19
+      1042 CHRIS                          HEMSWORTH                      15-APR-19
+      1000 PRATIMA                        DAHAL                          18-FEB-15
+      1002 SWASTIKA                       ADHIKARI                       20-APR-14
+      1004 NITU                           DAS                            18-FEB-16
+      1006 DIKSHYA                        GHALE                          23-NOV-17
+      1008 SARENA                         DAHAL                          29-DEC-15
+      1010 CHRIS                          HEMSWORTH                      08-APR-19
+
+8 rows selected.
+
+*/
+
+
+--SHOW ALL DETAILS OF FESTIVALS AND STAFF WHO IS GREATER THAN 20 YRS
+SELECT f.festival_name,f.occuring_date,s.staff_firstname,s.staff_surname
+FROM festivals f INNER JOIN festival_staff ff
+ON f.festival_nature_id = ff.festival_nature_id
+INNER JOIN staff s
+ON s.staff_id = ff.staff_id
+WHERE (SYSDATE-s.staff_dob) > 20;
+
+/*
+FESTIVAL_NAME                                      OCCURING_DATE        STAFF_FIRSTNAME           STAFF_SURNAME
+-------------------------------------------------- -------------------- ------------------------------ ------------------------------
+ROBOT SHOWING COMPETITION                          29-OCT-19            PRATIMA
+               DAHAL
+CONCERT                                            29-OCT-19            SWASTIKA
+               ADHIKARI
+FOOD FESTIVAL                                      19-MAR-19            NITU
+               DAS
+VIDEO GAMES                                        26-APR-19            DIKSHYA
+               GHALE
+VIDEO GAMES                                        26-APR-19            SARENA
+               DAHAL
+VIDEO GAMES                                        26-APR-19            DIKSHYA
+               GHALE
+VIDEO GAMES                                        26-APR-19            SARENA
+               DAHAL
+
+7 rows selected.
+
+*/
+
+
+----SHOWING THE DETAILS OF  FESTIVAL NAME,OCCURING DATE AND FESTIVAL TYPE
+SELECT f.festival_name, f.occuring_date, fn.festival_type
+FROM festivals f
+INNER JOIN festival_nature fn ON 
+f.festival_nature_id = fn.festival_nature_id
+ORDER BY f.festival_nature_id DESC;
+/*
+FESTIVAL_NAME                                      OCCURING_DATE        FESTIVAL_TYPE
+-------------------------------------------------- -------------------- --------------------------------------------------
+BEER FESTIVAL                                      29-JAN-19            MUSICAL
+VIDEO GAMES                                        26-APR-19            PARTIES
+VIDEO GAMES                                        26-APR-19            PARTIES
+FOOD FESTIVAL                                      19-MAR-19            GAMES
+CONCERT                                            29-OCT-19            MEALS,EATING AND DRINKING
+ROBOT SHOWING COMPETITION                          29-OCT-19            EXHIBITION
+
+6 rows selected.
+*/
+
+--QUERYING FESTIVAL DETAILS FROM FESTIVAL TABLE USING INNER JOIN AND ORDER BY
+COLUMN festival_name FORMAT A30;
+COLUMN festival_type FORMAT A30;
+COLUMN street FORMAT A30
+COLUMN city FORMAT A30
+SELECT f.festival_name festival_name, f.occuring_date occurring_date, fn.festival_type, l.location_address.country country,l.location_address.city city, l.location_address.street 
+street 
+FROM festivals f
+INNER JOIN festival_nature fn ON 
+f.festival_nature_id = fn.festival_nature_id
+JOIN locations l ON
+f.location_id = l.location_id
+ORDER BY f.occuring_date ASC;
+/*FESTIVAL_NAME                                      OCCURING_DATE        FESTIVAL_TYPE                                         COUNTRY              CITY                 STREET
+-------------------------------------------------- -------------------- -------------------------------------------------- -------------------- -------------------- 
+--------------------
+BEER FESTIVAL                                      29-JAN-19            MUSICAL
+                                   NEPAL                KATHMANDU            PUSPANJALI MARG
+FOOD FESTIVAL                                      19-MAR-19            GAMES
+                                   NEPAL                LUMBINI              ABC MARG
+VIDEO GAMES                                        26-APR-19            PARTIES
+                                   NEPAL                KATHMANDU            KAPAN
+VIDEO GAMES                                        26-APR-19            PARTIES
+                                   NEPAL                DANG                 MARG
+ROBOT SHOWING COMPETITION                          29-OCT-19            EXHIBITION
+                                   NEPAL                KATHMANDU            PUSPANJALI MARG
+CONCERT                                            29-OCT-19            MEALS,EATING AND DRINKING                     NEPAL                POKHARA              XYZ STREET
+
+6 rows selected.
+*/
+
+--SELECT ALL FESTIVALS CELEBRATED AT KATHMANDU CITY
+SELECT f.festival_name
+FROM festivals f
+WHERE f.location_id  IN (
+	SELECT l.location_id
+	FROM locations l
+	WHERE l.location_address.city = 'KATHMANDU');
+	/*
+	OUTPUT
+	FESTIVAL_NAME
+--------------------------------------------------
+ROBOT SHOWING COMPETITION
+BEER FESTIVAL
+VIDEO GAMES
+	*/
+	
+--SELECT ALL STAFF ORGANIZING FESTIVALS
+SELECT f.festival_name,s.staff_firstname,s.staff_surname
+FROM festivals f
+FULL OUTER JOIN festival_staff ff
+ON f.festival_nature_id = ff.festival_nature_id
+FULL OUTER JOIN staff s
+ON ff.staff_id = s.staff_id;
+/*
+output
+
+FESTIVAL_NAME                                      STAFF_FIRSTNAME                STAFF_SURNAME
+-------------------------------------------------- ------------------------------ ------------------------------
+                                                   CHRIS                          HEMSWORTH
+												   CHRIS                          HEMSWORTH
+ROBOT SHOWING COMPETITION                          PRATIMA                        DAHAL
+CONCERT                                            SWASTIKA                       ADHIKARI
+FOOD FESTIVAL                                      NITU                           DAS
+VIDEO GAMES                                        DIKSHYA                        GHALE
+VIDEO GAMES                                        DIKSHYA                        GHALE
+VIDEO GAMES                                        SARENA                         DAHAL
+VIDEO GAMES                                        SARENA                         DAHAL
+                                                   CHRIS                          HEMSWORTH
+*/
+
+--SELECT ALL FESTIVAL TYPE HELD ON CONTRY NEPAL
+SELECT ff.festival_type
+FROM festival_nature ff
+WHERE ff.festival_nature_id  IN (
+	SELECT f.festival_nature_id
+	FROM festivals f
+	WHERE f.location_id IN(
+	SELECT l.location_id
+	FROM locations l
+	WHERE l.location_address.country ='NEPAL'));
+	/*
+	OUTPUT
+	FESTIVAL_TYPE
+--------------------------------------------------
+EXHIBITION
+MEALS,EATING AND DRINKING
+GAMES
+PARTIES
+MUSICAL
+	*/
+
+
+	
+--ADDRESS WHERE STAFF IS NOT AVAILABLE
+SELECT * FROM addresses a
+WHERE REF(a) NOT IN(
+SELECT s.staff_address
+FROM staff s
+);
+/*
+NO ROWS SELECTED
+*/
+
+--SELECT ALL FESTIVAL TYPE AND FESTIVAL NAME  USING WHERE CLAUSE AND UNIION, IN
+SELECT ff.festival_type,f.festival_name
+FROM festival_nature ff
+FULL OUTER JOIN festivals f
+ON ff.festival_nature_id = f.festival_nature_id
+WHERE ff.festival_nature_id  IN (
+	SELECT f.festival_nature_id
+	FROM festivals f
+	WHERE f.location_id IN(
+		SELECT l.location_id
+		FROM locations l
+		WHERE l.location_address.country IN(
+			SELECT s.staff_address.country Country
+			FROM staff s
+			WHERE s.staff_address.country = 'NEPAL'
+			AND s.staff_address.city ='KATHMANDU'
+			UNION
+			SELECT l.location_address.country Country
+			FROM locations l
+			WHERE l.location_address.country = 'NEPAL'
+		)
+	)
+);
+/*
+OUTPUT
+FESTIVAL_TYPE                                      FESTIVAL_NAME
+-------------------------------------------------- --------------------------------------------------
+GAMES                                              FOOD FESTIVAL
+EXHIBITION                                         ROBOT SHOWING COMPETITION
+MUSICAL                                            BEER FESTIVAL
+MEALS,EATING AND DRINKING                          CONCERT
+PARTIES                                            VIDEO GAMES
+PARTIES                                            VIDEO GAMES
+*/
+
+
+----SELECT STAFF NAME AND LOCATION FROM LOCATION TABLE
+SELECT s.staff_id,s.staff_firstname,l.location_address.country Country
+FROM staff s
+LEFT OUTER JOIN(
+festival_staff ff INNER JOIN festivals f
+ON ff.festival_nature_id = f.festival_nature_id
+AND ff.location_id = f.location_id
+JOIN locations l
+ON l.location_id = f.location_id
+)
+ON s.staff_id = ff.staff_id;
+/*
+OUTPUT
+ STAFF_ID STAFF_FIRSTNAME                COUNTRY
+---------- ------------------------------ -------------------------
+      1000 PRATIMA                        NEPAL
+      1002 SWASTIKA                       NEPAL
+      1004 NITU                           NEPAL
+      1006 DIKSHYA                        NEPAL
+      1008 SARENA                         NEPAL
+      1010 CHRIS
+      1040 CHRIS
+      1042 CHRIS
+*/
+
+--SELECT FESTIVAL NAME AND OCCURING DATE IN GIVEN LOCATIONS
+SELECT f.festival_name, f.occuring_date
+FROM festivals f
+WHERE EXISTS(
+	SELECT location_id
+	FROM locations l
+	WHERE l.location_address.country = 'NEPAL'
+	);
+	/*
+	OUTPUT
+	FESTIVAL_NAME                                      OCCURING_
+-------------------------------------------------- ---------
+ROBOT SHOWING COMPETITION                          29-OCT-19
+CONCERT                                            29-OCT-19
+FOOD FESTIVAL                                      19-MAR-19
+VIDEO GAMES                                        26-APR-19
+VIDEO GAMES                                        26-APR-19
+BEER FESTIVAL                                      29-JAN-19
+	*/
+	
+--QUERYING STAFF ID, FIRSTNAME,AND COUNTRY OF STAFF USING INTERSECT
+SELECT l.location_address.city CITY
+FROM locations l
+INNER JOIN festivals f
+ON l.location_id = f.location_id
+FULL OUTER JOIN festival_staff ff
+ON f.festival_nature_id = ff.festival_nature_id
+INTERSECT
+SELECT s.staff_address.city
+FROM staff s
+LEFT OUTER JOIN festival_staff fe
+ON s.staff_id = fe.staff_id;
+/*
+OUTPUT
+CITY
+--------------------------------------------------
+DANG
+KATHMANDU
+LUMBINI
+POKHARA
+*/
+
+	
+
+-- QUERYING STAFF ID, FIRSTNAME,AND COUNTRY OF STAFF USING RIGHT JOIN, INNER JOIN
+SELECT s.staff_id,s.staff_firstname,s.staff_address.country Country,fn.festival_type
+FROM festival_nature fn
+RIGHT OUTER JOIN(
+festivals f INNER JOIN festival_staff ff
+ON f.festival_nature_id = ff.festival_nature_id
+JOIN staff s
+ON s.staff_id = ff.staff_id
+)
+ON fn.festival_nature_id = f.festival_nature_id;
+/*
+	OUTPUT
+CITY
+--------------------------------------------------
+DANG
+KATHMANDU
+LUMBINI
+POKHARA
+*/
+
+
+--QUERYING TO COUNT THE FESTIVAL NATURE ID AND FESTIVAL NAME
+SELECT COUNT(festival_nature_id) Serial,festival_name
+FROM festivals
+GROUP BY festival_name;
+/*
+OUTPUT
+COUNT(FESTIVAL_NATURE_ID) FESTIVAL_NAME
+------------------------- --------------------------------------------------
+                        1 BEER FESTIVAL
+                        1 CONCERT
+                        2 VIDEO GAMES
+                        1 ROBOT SHOWING COMPETITION
+                        1 FOOD FESTIVAL
+*/
+--UPDATE STAFF TABLE WITH staff_salary+(staff_salary*0.0001s
+UPDATE staff 
+SET staff_salary = staff_salary+(staff_salary*0.0001);
+/*
+OUTPUT
+one line Updated by DB on 19-APR-19
+*/
+
+--TO SHOW THE SALARY OF THE STAFF
+SELECT staff_salary , CEIL(staff_salary) "CEIL" ,
+					  FLOOR(staff_salary)"FLOOR",
+					  ROUND(staff_salary)"ROUND",
+					  TRUNC(staff_salary)"TRUNCATE"
+FROM staff;
+/*
+OUTPUT
+STAFF_SALARY       CEIL      FLOOR      ROUND   TRUNCATE
+------------ ---------- ---------- ---------- ----------
+       39964      39964      39964      39964      39964
+    59945.99      59946      59945      59946      59945
+    99909.99      99910      99909      99910      99909
+    79927.99      79928      79927      79928      79927
+   119891.99     119892     119891     119892     119891
+*/
+
+	
+-- QUERYING TO DISPLAY THE MAXMIMUM SALARY OF THE STAFF
+SELECT MAX(to_char(staff_salary,'999999D99')) "Max Salary",CEIL(MAX(to_char(staff_salary,'999999D99'))) "CEIL" ,
+						 FLOOR(MAX(to_char(staff_salary,'999999D99')))"FLOOR",
+						 ROUND(MAX(to_char(staff_salary,'999999D99')))"ROUND",
+						 TRUNC(MAX(to_char(staff_salary,'999999D99')))"TRUNCATE"
+FROM staff;
+/*
+OUTPUT
+MAX(STAFF_SALARY)       CEIL      FLOOR      ROUND   TRUNCATE
+----------------- ---------- ---------- ---------- ----------
+        119891.99     119892     119891     119892     119891
+*/
+
+
+--QUERYING TO DISPLAY THE MINIMUM SALARY OF THE STAFF
+SELECT MIN(to_char(staff_salary,'999999D99')),CEIL(MIN(to_char(staff_salary,'999999D99'))) "CEIL" ,
+						 FLOOR(MIN(to_char(staff_salary,'999999D99')))"FLOOR",
+						 ROUND(MIN(to_char(staff_salary,'999999D99')))"ROUND",
+						 TRUNC(MIN(to_char(staff_salary,'999999D99')))"TRUNCATE"
+FROM staff;
+/*
+OUTPUT
+MIN(STAFF_SALARY)       CEIL      FLOOR      ROUND   TRUNCATE
+----------------- ---------- ---------- ---------- ----------
+            39964      39964      39964      39964      39964
+*/	
+
+
+--
+--QUERY TO DISPLAY THE CEIL ROUND TRUNCATE AND FLOOR OF THE SALARY
+SELECT * FROM(
+SELECT staff_firstname , ROUND(staff_salary) "max and round" , CEIL(staff_salary) "CEIL" ,FLOOR(staff_salary)"FLOOR",TRUNC(staff_salary)"Trunct"
+FROM staff
+ORDER BY staff_salary ASC)
+WHERE rownum<=1;
+/*
+OUTPUT
+STAFF_FIRSTNAME                max and round       CEIL      FLOOR     Trunct
+------------------------------ ------------- ---------- ---------- ----------
+PRATIMA                                39964      39964      39964      39964
+*/

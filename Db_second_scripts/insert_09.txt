@@ -1,0 +1,267 @@
+/*
+	Group No:09
+	Group Members: Anuj Budha Magar, Amrit Thapa, Pratima Dahal, Swastika Adhikari
+	Script: Insert Script
+	Module : csy2038 - Database 2
+	Module Tutor: Sangita Satyal
+	Path: @F:\DatabaseYEAR2\assignment\insert_09.txt
+*/
+  --DESCRIBING THE STRUCTURE OF LOCATIONS TABLE
+ DESC locations;
+ 
+ --INSERTING VALUES IN LOCATIONS
+ INSERT INTO locations(location_id,location_address)
+ VALUES(seq_locations.NEXTVAL,address_type('NEPAL','KATHMANDU','PUSPANJALI MARG'));
+ 
+ INSERT INTO locations(location_id,location_address)
+ VALUES(seq_locations.NEXTVAL,address_type('NEPAL','POKHARA','XYZ STREET'));
+ 
+ INSERT INTO locations(location_id,location_address)
+ VALUES(seq_locations.NEXTVAL,address_type('NEPAL','LUMBINI','ABC MARG'));
+ 
+ INSERT INTO locations
+ VALUES(seq_locations.NEXTVAL,address_type('NEPAL','KATHMANDU','KAPAN'));
+ 
+ INSERT INTO locations
+ VALUES(seq_locations.NEXTVAL,address_type('NEPAL','DANG','MARG'));
+
+ INSERT INTO locations
+ VALUES(seq_locations.NEXTVAL,address_type('NEPAL','POKHARA','PRITHVI MARG'));
+
+  INSERT INTO locations
+ VALUES(seq_locations.NEXTVAL,address_type('NEPAL','KATHMANDU','PRITHVI MARG'));
+
+  INSERT INTO locations
+ VALUES(seq_locations.NEXTVAL,address_type('NEPAL','DANG','VALLEY-TOP MARG'));
+ 
+ --VIEWING THE INSERTED DATA FROM LOCATIONS TABLE
+ SELECT location_id,location_address FROM locations
+ 
+  --DESCRIBING THE STRUCTURE OF FESTIVAL_NATURE TABLE
+ DESC festival_nature;
+ 
+ --INSERTING VALUES IN FESTIVAL_NATURE
+ INSERT INTO festival_nature(festival_nature_id,festival_type)
+ VALUES(seq_festival_nature.NEXTVAL,'EXHIBITION');
+ 
+ INSERT INTO festival_nature(festival_nature_id,festival_type)
+ VALUES(seq_festival_nature.NEXTVAL,'FOOD FESTIVAL');
+ 
+ INSERT INTO festival_nature(festival_nature_id,festival_type)
+ VALUES(seq_festival_nature.NEXTVAL,'GAMES');
+ 
+ INSERT INTO festival_nature
+ VALUES(seq_festival_nature.NEXTVAL,'PARTIES');
+ 
+ INSERT INTO festival_nature
+ VALUES(seq_festival_nature.NEXTVAL,'MUSICAL');
+ 
+  INSERT INTO festival_nature
+ VALUES(seq_festival_nature.NEXTVAL,'FILM FESTIVAL');
+ 
+  
+ --VIEWING THE INSERTED DATA FROM FESTIVAL_NATURE TABLE
+ SELECT festival_nature_id,festival_type FROM festival_nature;
+ 
+ --DESCRIBING THE STRUCTURE OF ADDRESSES TABLE
+ DESC addresses;
+ 
+ 
+ --INSERTING VALUES IN ADDRESSES
+ INSERT INTO addresses
+ VALUES ('NEPAL', 'KATHMANDU','PUSPANJALI MARG');
+ 
+ INSERT INTO addresses
+ VALUES ('NEPAL', 'POKHARA','XYZ STREET');
+ 
+ INSERT INTO addresses
+ VALUES ('NEPAL', 'LUMBINI','ABC MARG');
+ 
+ INSERT INTO addresses
+ VALUES ('NEPAL', 'KATHMANDU','KAPAN');
+ 
+ INSERT INTO addresses
+ VALUES ('NEPAL', 'DANG','MARG');
+ 
+  INSERT INTO addresses
+ VALUES ('INDIA', 'HP','17 AVENUE');
+
+ INSERT INTO addresses
+ VALUES ('NEPAL','POKHARA','PRITHVI MARG');
+
+  INSERT INTO addresses
+ VALUES ('NEPAL','KATHMANDU','PRITHVI MARG');
+
+  INSERT INTO addresses
+ VALUES ('NEPAL','DANG','VALLEY-TOP MARG');
+
+  --VIEWING THE INSERTED DATA FROM ADDRESSES
+  SELECT country,city,street FROM addresses;
+  
+  --DESCRIBING THE STRUCTURE OF STAFF TABLE
+  DESC staff;
+ 
+ --INSERTING VALUES IN STAFF
+ INSERT INTO staff(staff_id,staff_title,staff_firstname,staff_surname,staff_gender,staff_contact,social_media_used,staff_address)
+ SELECT seq_staff.NEXTVAL,'MRS','PRATIMA','DAHAL','F',contact_varray_type(
+																contact_type('PRATIMA@GMAIL.COM','01-4000090','0989077888'),
+																contact_type('DPRATIMA@GMAIL.COM','01-4890900','9808900990')),
+														social_media_table_type(
+																social_media_type('FACEBOOK','DPRATIMA',''),
+																social_media_type('TWITTER','PRATIMAD','')),
+																REF(a) FROM addresses a
+																WHERE a.street= 'KAPAN';
+																
+INSERT INTO staff(staff_id,staff_title,staff_firstname,staff_surname,staff_gender,staff_contact,social_media_used,staff_address)
+ SELECT seq_staff.NEXTVAL,'MRS','SWASTIKA','ADHIKARI','F',contact_varray_type(
+																contact_type('SWASTIKA@GMAIL.COM','01-40989090','0989077998'),
+																contact_type('ASWASTIKA@GMAIL.COM','01-48090900','980990990')),
+														social_media_table_type(
+																social_media_type('INSTAGRAM','ASWASTIKA',''),
+																social_media_type('VIBER','SWASTIKAA','')),
+																REF(a) FROM addresses a
+																WHERE a.street= 'PUSPANJALI MARG';
+																
+ INSERT INTO staff(staff_id,staff_title,staff_firstname,staff_surname,staff_gender,staff_contact,social_media_used,staff_address)
+ SELECT seq_staff.NEXTVAL,'MRS','NITU','DAS','F',contact_varray_type(
+																contact_type('NITU@GMAIL.COM','01-409000','0989977888'),
+																contact_type('DNITU@GMAIL.COM','01-4809090','980890990')),
+														social_media_table_type(
+																social_media_type('FACEBOOK','DNITU',''),
+																social_media_type('TWITTER','NITUD','')),
+																REF(a) FROM addresses a
+																WHERE a.street= 'XYZ STREET';
+																
+ INSERT INTO staff(staff_id,staff_title,staff_firstname,staff_surname,staff_gender,staff_contact,social_media_used,staff_address)
+ SELECT seq_staff.NEXTVAL,'MRS','DIKSHYA','GHALE','F',contact_varray_type(
+																contact_type('DIKKU@GMAIL.COM','01-4900090','0989077988'),
+																contact_type('GDIKKU@GMAIL.COM','01-4890900','9808908990')),
+														social_media_table_type(
+																social_media_type('FACEBOOK','GDIKKU',''),
+																social_media_type('TWITTER','DIKSHYA','')),
+																REF(a) FROM addresses a
+																WHERE a.street= 'ABC MARG';
+
+ INSERT INTO staff(staff_id,staff_title,staff_firstname,staff_surname,staff_gender,staff_contact,social_media_used,staff_address)
+ SELECT seq_staff.NEXTVAL,'MRS','SARENA','DAHAL','F',contact_varray_type(
+																contact_type('SARENA@GMAIL.COM','01-4990090','0989007888'),
+																contact_type('DSARENA@GMAIL.COM','01-489000','980000990')),
+														social_media_table_type(
+																social_media_type('INSTAGRAM','DSARENA',''),
+																social_media_type('TWITTER','SARENAD','')),
+																REF(a) FROM addresses a
+																WHERE a.street= 'MARG';	
+
+INSERT INTO staff(staff_id,staff_title,staff_firstname,staff_surname,staff_gender,staff_contact,social_media_used,staff_address)
+ SELECT seq_staff.NEXTVAL,'MR','CHRIS','HEMSWORTH','M',contact_varray_type(
+																contact_type('HEMS@GMAIL.COM','01-49912','123324234'),
+																contact_type('CHEMS@GMAIL.COM','01-489000','980000990')),
+														social_media_table_type(
+																social_media_type('INSTAGRAM','HEMS.CHRIS',''),
+																social_media_type('TWITTER','H.CHRIS','')),
+																REF(a) FROM addresses a
+																WHERE a.street= '17 AVENUE';
+
+INSERT INTO staff(staff_id,staff_title,staff_firstname,staff_surname,staff_gender,staff_contact,social_media_used,staff_address)
+ SELECT seq_staff.NEXTVAL,'MRS','SCARLETT','EVANS','F',contact_varray_type(
+																contact_type('SCAR@GMAIL.COM','01-4991892','564789556'),
+																contact_type('CHEMS@GMAIL.COM','01-489000','568453548')),
+														social_media_table_type(
+																social_media_type('INSTAGRAM','SCAR.JOHAN',''),
+																social_media_type('TWITTER','SC.EVANS','')),
+																REF(a) FROM addresses a
+																WHERE a.street= 'XYZ STREET';																	
+
+
+																
+
+ --FORMATTING COLUMN SIZE
+ SET LINESIZE 180;
+COLUMN staff_firstname FORMAT A15;
+COLUMN staff_surname FORMAT A15;
+COLUMN staff_contact FORMAT A30;
+COLUMN social_media_used FORMAT A30;
+COLUMN staff_address FORMAT A30;
+--VIEWING THE INSERTED DATA IN STAFF TABLE
+SELECT staff_id,staff_title,staff_firstname,staff_surname,staff_contact,staff_address,staff_gender,staff_blood_group,staff_hire_date,staff_salary,staff_dob FROM staff;
+
+--DESCRIBING THE STRUCTURE OF festivals
+DESC festivals;
+																
+--INSERTING VALUES IN FESTIVALS
+INSERT INTO festivals
+VALUES (50001,5000, 'ROBOT SHOWING COMPETITION', '29-OCT-2019');
+
+INSERT INTO festivals
+VALUES (50002,5001, 'CONCERT', '29-OCT-2019');
+
+INSERT INTO festivals
+VALUES (50003,5002, 'FOOD FESTIVAL', '19-MAR-2019');
+
+INSERT INTO festivals
+VALUES (50004,5003, 'VIDEO GAMES', '26-APR-2019');
+
+INSERT INTO festivals
+VALUES (50004,5004, 'VIDEO GAMES', '26-APR-2019');
+
+INSERT INTO festivals
+VALUES (50004,5000, 'BEER FESTIVAL', '29-JAN-2019');
+
+
+
+--VIEWING THE INSERTED DATA IN  FESTIVALS TABLE
+SELECT festival_nature_id,location_id,festival_name,occuring_date FROM festivals;
+
+--DESCRIBING THE STRUCTURE OF FESTIVAL_STAFF
+DESC festival_staff;
+
+--INSERTING VALUES IN FESTIVAL_STAFF
+INSERT INTO festival_staff(location_id, festival_nature_id, staff_id)
+VALUES (5000, 50001, 1000 );	
+
+INSERT INTO festival_staff(location_id, festival_nature_id, staff_id)
+VALUES (5001, 50002, 1002 );
+
+INSERT INTO festival_staff(location_id, festival_nature_id, staff_id)
+VALUES (5002, 50003, 1004 );
+
+INSERT INTO festival_staff(location_id, festival_nature_id, staff_id)
+VALUES (5003, 50004, 1006 );
+
+INSERT INTO festival_staff(location_id, festival_nature_id, staff_id)
+VALUES (5004, 50004, 1008 );											
+																
+--VIEWING THE INSERTED DATA IN  FESTIVAL_STAFF
+SELECT location_id,festival_nature_id,staff_id FROM festival_staff;
+
+--UPDATING THE VALUES IN STAFF
+UPDATE staff
+SET staff_blood_group = 'A+',staff_hire_date = '18-FEB-2015',staff_salary = 20000,staff_dob = '19-MAR-1995'
+WHERE staff_id = 1000;
+
+UPDATE staff
+SET staff_blood_group = 'AB+',staff_hire_date = '20-APR-2014',staff_salary = 30000,staff_dob = '20-APR-1994'
+WHERE staff_id = 1002;
+
+UPDATE staff
+SET staff_blood_group = 'B+',staff_hire_date = '18-FEB-2016',staff_salary = 50000,staff_dob = '1-NOV-1993'
+WHERE staff_id = 1004;
+
+UPDATE staff
+SET staff_blood_group = 'AB-',staff_hire_date = '23-NOV-2017',staff_salary = 40000,staff_dob = '19-DEC-1992'
+WHERE staff_id = 1006;
+
+UPDATE staff
+SET staff_blood_group = 'B-',staff_hire_date = '29-DEC-2015',staff_salary = 60000,staff_dob = '12-MAR-1991'
+WHERE staff_id = 1008;
+
+UPDATE staff 
+SET staff_salary = 50000 
+WHERE staff_id = 1010;
+
+UPDATE staff 
+SET staff_salary = 60000 
+WHERE staff_id = 1012;
+
+UPDATE staff
+SET leader= 1002;

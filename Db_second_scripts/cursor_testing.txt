@@ -1,0 +1,264 @@
+/*
+	Group No:09
+	Group Members: Anuj Budha Magar, Amrit Thapa, Pratima Dahal, Swastika Adhikari
+	Script: Cursor Script
+	Module : csy2038 - Database 2
+	Module Tutor: Sangita Satyal
+	Path: @E:\DatabaseYEAR2\assignment\cursor_testing.txt
+*/
+
+-------1--------
+--TESTING
+SELECT festival_nature_id, location_id,festival_name FROM festivals;
+/*
+FESTIVAL_NATURE_ID LOCATION_ID FESTIVAL_NAME
+------------------ ----------- --------------------------------------------------
+             50001        5000 ROBOT SHOWING COMPETITION
+             50002        5001 CONCERT
+             50003        5002 FOOD FESTIVAL
+             50004        5003 VIDEO GAMES
+             50004        5004 VIDEO GAMES
+             50005        5000 BEER FESTIVAL
+
+6 rows selected.
+*/
+
+--INSERTING INTO SITES TABLE
+INSERT INTO festivals(festival_nature_id,location_id,festival_name) VALUES(50006,5000,'DANCE FESTIVALS');
+--1 row created.
+
+--TESTING
+SELECT festival_nature_id,location_id,festival_name FROM festivals;
+/*
+FESTIVAL_NATURE_ID LOCATION_ID FESTIVAL_NAME
+------------------ ----------- --------------------------------------------------
+             50001        5000 ROBOT SHOWING COMPETITION
+             50002        5001 CONCERT
+             50003        5002 FOOD FESTIVAL
+             50004        5003 VIDEO GAMES
+             50004        5004 VIDEO GAMES
+             50005        5000 BEER FESTIVAL
+             50006        5000 DANCE FESTIVALS
+
+7 rows selected.
+*/
+
+--EXECUTING THE PROCEDURE
+EXEC proc_fes_imp_cursor('DANCE FESTIVALS');
+--PL/SQL procedure successfully completed.
+
+--TESTING
+SELECT festival_nature_id,location_id,festival_name FROM festivals;
+/*
+FESTIVAL_NATURE_ID LOCATION_ID FESTIVAL_NAME
+------------------ ----------- --------------------------------------------------
+             50001        5000 ROBOT SHOWING COMPETITION
+             50002        5001 CONCERT
+             50003        5002 FOOD FESTIVAL
+             50004        5003 VIDEO GAMES
+             50004        5004 VIDEO GAMES
+             50005        5000 BEER FESTIVAL
+
+6 rows selected.
+*/
+
+-------------------------------------2------------------------------------------
+
+--TESTING
+SELECT festival_nature_id,location_id,festival_name FROM festivals;
+/*
+
+FESTIVAL_NATURE_ID LOCATION_ID FESTIVAL_NAME
+------------------ ----------- --------------------------------------------------
+             50001        5000 ROBOT SHOWING COMPETITION
+             50002        5001 CONCERT
+             50003        5002 FOOD FESTIVAL
+             50004        5003 VIDEO GAMES
+             50004        5004 VIDEO GAMES
+             50005        5000 BEER FESTIVAL
+
+6 rows selected.
+*/
+--INSERTING INTO SITES TABLE
+INSERT INTO festivals(festival_nature_id,location_id,festival_name) 
+VALUES(50005,5001,'MUSICAL FESTIVAL');
+--1 row created.
+--TESTING
+SELECT festival_nature_id,location_id,festival_name FROM festivals;
+/*
+FESTIVAL_NATURE_ID LOCATION_ID FESTIVAL_NAME
+------------------ ----------- --------------------------------------------------
+             50001        5000 ROBOT SHOWING COMPETITION
+             50002        5001 CONCERT
+             50003        5002 FOOD FESTIVAL
+             50004        5003 VIDEO GAMES
+             50004        5004 VIDEO GAMES
+             50005        5000 BEER FESTIVAL
+             50005        5001 MUSICAL FESTIVAL
+
+7 rows selected.
+*/
+
+--EXECUTING THE PROCEDURE
+EXEC proc_imp_cursor('MUSICAL FESTIVAL');
+/*
+DELETED MUSICAL FESTIVAL
+
+PL/SQL procedure successfully completed.
+*/
+--TESTING
+SELECT festival_nature_id,location_id,festival_name FROM festivals;
+/*
+FESTIVAL_NATURE_ID LOCATION_ID FESTIVAL_NAME
+------------------ ----------- --------------------------------------------------
+             50001        5000 ROBOT SHOWING COMPETITION
+             50002        5001 CONCERT
+             50003        5002 FOOD FESTIVAL
+             50004        5003 VIDEO GAMES
+             50004        5004 VIDEO GAMES
+             50005        5000 BEER FESTIVAL
+
+6 rows selected.
+/*
+
+-------------------------------------3-------------------------------------------
+--TESTING
+SELECT staff_firstname,staff_salary FROM staff
+/*
+STAFF_FIRSTNAME                STAFF_SALARY
+------------------------------ ------------
+ARYAN                                 65000
+RANEET                                65000
+PRATIMA                               20000
+SWASTIKA                              30000
+NITU                                  50000
+DIKSHYA                               40000
+SARENA                                60000
+CHRIS                                 50000
+ANUJA                                 60006
+AMRIT                                 65000
+
+10 rows selected.
+*/
+
+EXEC proc_exp_cursor(50000);
+/*
+STAFF   SALARY  IS
+--------------------------
+1    ARYAN    65000
+2    RANEET    65000
+3    NITU    50000
+4    SARENA    60000
+5    CHRIS    50000
+6    ANUJA    60006
+7    AMRIT    65000
+THERE ARE 7 ROWS
+
+PL/SQL procedure successfully completed.
+*/
+
+EXEC proc_exp_cursor(80000);
+/*
+STAFF   SALARY  IS
+--------------------------
+THERE ARE 0 ROWS
+*/
+
+--------------------------4--------------------------------------
+--PROCEDURE CREATED
+--TESTING
+SELECT staff_id, staff_firstname, staff_salary FROM staff;
+/*
+  STAFF_ID STAFF_FIRSTNAME                STAFF_SALARY
+---------- ------------------------------ ------------
+      1088 ARYAN                                 65000
+      1094 RANEET                                65000
+      1000 PRATIMA                               20000
+      1002 SWASTIKA                              30000
+      1004 NITU                                  50000
+      1006 DIKSHYA                               40000
+      1008 SARENA                                60000
+      1010 CHRIS                                 50000
+      1016 ANUJA                                 60006
+      1042 AMRIT                                 65000
+
+10 rows selected.
+*/
+
+--EXECUTING 
+EXEC proc_exp_staff_salary(10000);
+/*
+1088    ARYAN
+
+65000
+1094    RANEET
+
+65000
+1000    PRATIMA
+
+20000
+1002    SWASTIKA
+
+30000
+1004    NITU
+
+50000
+1006    DIKSHYA
+
+40000
+1008    SARENA
+
+60000
+1010    CHRIS
+
+50000
+1016    ANUJA
+
+60006
+1042    AMRIT
+
+65000
+
+PL/SQL procedure successfully completed.
+*/
+--DISPLAYED
+
+EXEC proc_exp_staff_salary(99999);
+--NO SUCH STAFF WITH SUCH SALARY FOUND
+
+-----------------------------------5-----------------------------------
+--TESTING
+--SELECT STATEMENT
+SELECT festival_name,occuring_date FROM festivals WHERE festival_nature_id =50004 ;
+--2 ROWS RETURNED
+
+--EXECUTE PROCEDURE
+EXEC proc_exp_cursor(50004);
+/*
+FESTIVAL_NAME                                      OCCURING_
+-------------------------------------------------- ---------
+VIDEO GAMES                                        26-APR-19
+VIDEO GAMES                                        26-APR-19
+*/
+-- NUMBER OF ROWS(2) RETURNED
+
+--EXECUTE PROCEDURE
+EXEC proc_exp_cursor(500000);
+/*
+FESTIVAL NAME WITH OCCURING DATE
+---------------------------------
+THERE ARE 0 ROWS
+*/
+--NUMBER OF ROWS(0) RETURNED
+
+
+
+
+
+
+
+
+
+
+
+

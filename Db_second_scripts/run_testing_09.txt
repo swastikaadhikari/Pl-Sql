@@ -1,0 +1,40 @@
+/*
+	Group No:09
+	Group Members: Anuj Budha Magar, Amrit Thapa, Pratima Dahal, Swastika Adhikari
+	Script: RUN Testing Script
+	Module : csy2038 - Database 2
+	Module Tutor: Sangita Satyal
+	Path: @E:\DatabaseYEAR2\assignment\run_testing_09.txt
+*/
+
+
+
+--CREATE RUN SCRIPT
+@E:\DatabaseYEAR2\assignment\create_09.txt
+
+--CREATE ALTER SCRIPT
+@E:\DatabaseYEAR2\assignment\constraints_09.txt
+
+--TRIGGER SCRIPT
+@E:\DatabaseYEAR2\assignment\trigger_09.txt
+
+--CREATE INSERT SCRIPT
+@E:\DatabaseYEAR2\assignment\insert_09.txt
+
+--QUERY SCRIPT
+@E:\DatabaseYEAR2\assignment\query_09.txt
+
+--PROCEDURE SCRIPT
+@E:\DatabaseYEAR2\assignment\procedure_09.txt
+
+--FUNCTION SCRIPT
+@E:\DatabaseYEAR2\assignment\functions_09.txt
+
+--CURSOR SCRIPT
+@E:\DatabaseYEAR2\assignment\cursor_09.txt
+
+--PACKAGE SCRIPT
+@E:\DatabaseYEAR2\assignment\package_09.txt
+
+--DROP SCRIPT
+@E:\DatabaseYEAR2\assignment\drop_09.txt

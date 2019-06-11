@@ -1,0 +1,337 @@
+/*
+	Group No:09
+	Group Members: Anuj Budha Magar, Amrit Thapa, Pratima Dahal, Swastika Adhikari
+	Script: Procedure Script
+	Module : csy2038 - Database 2
+	Module Tutor: Sangita Satyal
+	Path: @E:\DatabaseYEAR2\assignment\procedure_09.txt
+*/
+
+--ENABLING SERVEROUTPUT TO DISPLAY SERVER MESSAGES
+SET SERVEROUTPUT ON;
+
+--DESCRIBING THE TABLE  STAFF
+DESC TABLE staff;
+
+--DESCRIBING THE TABLE  STAFF
+DESC staff;
+
+--VIEWING THE DATA OF  STAFF
+SELECT * FROM staff;
+
+-----1------
+--UNNAMED BLOCK
+--USE OF LOOP,WHILE,FOR
+-----GET FIRSTNAME SURNAME ND TITLE
+DECLARE
+	vn_length NUMBER(2);
+	vn_counter NUMBER(3) := 1;
+	vc_title VARCHAR2(20);
+	vc_firstname VARCHAR2(20);
+	vc_surname VARCHAR2(20);
+
+BEGIN
+	SELECT staff_title,staff_firstname,staff_surname  INTO vc_title,vc_firstname,vc_surname FROM staff WHERE staff_id = 1000;
+	DBMS_OUTPUT.PUT_LINE('--Title--');
+	vn_length := LENGTH(vc_title);
+	--START THE LOOP
+	LOOP
+		--LOOP TERMINATION CONDITION
+		EXIT WHEN vn_counter>vn_length;
+		DBMS_OUTPUT.PUT_LINE(SUBSTR(vc_title, vn_counter, 1));
+		vn_counter := vn_counter + 1;
+	--END OF LOOP
+	END LOOP;
+	
+	vn_counter :=1;
+	DBMS_OUTPUT.PUT_LINE('--Firstname--');
+	vn_length := LENGTH(vc_firstname);
+	--WHILE LOOP TERMINATION CONDITION
+	WHILE vn_counter<=vn_length LOOP
+		DBMS_OUTPUT.PUT_LINE(SUBSTR(vc_firstname, vn_counter, 1));
+		vn_counter := vn_counter + 1;
+--END OF LOOP
+	END LOOP;
+	
+	DBMS_OUTPUT.PUT_LINE('--Surname--');
+	vn_length := LENGTH(vc_surname);
+	--FOR LOOP TERMINATION CONDITION
+	FOR vn_counter IN 1 .. vn_length LOOP
+		DBMS_OUTPUT.PUT_LINE(SUBSTR(vc_surname, vn_counter, 1));
+	--END OF LOOP
+	END LOOP;
+
+--END OF PROGRAMME
+END;
+/
+
+
+
+-------------2------------------
+--RETURNS THE NAME OF STAFF WITH PARTICULAR ID
+DECLARE 
+   c_id staff.staff_id%type := 1000; 
+   c_name staff.staff_firstname%type; 
+BEGIN 
+   SELECT  staff_firstname INTO  c_name
+   FROM staff 
+   WHERE staff_id = c_id;  
+   DBMS_OUTPUT.PUT_LINE ('Name: '||  c_name); 
+EXCEPTION 
+   WHEN no_data_found THEN 
+      dbms_output.put_line('No such staff!'); 
+   WHEN others THEN 
+      dbms_output.put_line('Error!'); 
+END; 
+/
+
+
+----------------------------------*********3***************--------------------------------------
+--CREATE VARRAY TEAM_VARRAY_TYPE FOR TABLE TEAM
+CREATE OR REPLACE TYPE team_varray_type AS VARRAY(50) OF NUMBER(11);
+/
+--CREATING TABLE USING PROCEDURE
+CREATE OR REPLACE PROCEDURE proc_create_team IS
+vc_command VARCHAR2(2000);
+BEGIN
+	vc_command:='CREATE TABLE team (team_id NUMBER(7),team_name VARCHAR2(100),members team_varray_type,staff_id NUMBER(11))';
+	EXECUTE IMMEDIATE vc_command;
+	END;
+	/
+--EXECUTE THE PROCEDURE
+EXEC proc_create_team;
+-------------------------*********************************---------------------------------
+
+
+--CREATING PRIMARY KEY 
+CREATE OR REPLACE PROCEDURE proc_primary_team IS
+vc_command VARCHAR2(2000);
+BEGIN 
+	vc_command:='ALTER TABLE team
+				ADD CONSTRAINT pk_team
+				PRIMARY KEY(team_id) ';
+	EXECUTE IMMEDIATE vc_command;
+	END;
+	/
+	
+--EXECUTE THE PROCEDURE
+EXEC proc_primary_team;
+------------------------------------------------------------------------
+
+--CREATING FOREIGN KEY
+CREATE OR REPLACE PROCEDURE proc_foreign_team IS
+vc_command VARCHAR2(2000);
+BEGIN
+	vc_command:='ALTER TABLE team
+				ADD CONSTRAINT fk_t_staff
+				FOREIGN KEY(staff_id)
+				REFERENCES staff(staff_id)';
+	EXECUTE IMMEDIATE vc_command;
+	END;
+	/
+	SHOW ERRORS;
+	--NO ERRORS
+	
+	--TESTING
+--SELECT ALL PRIMARY KEY
+	SELECT constraint_name
+	FROM user_constraints
+	WHERE constraint_name
+	LIKE 'FK%'; 
+--4 rows returned
+
+--EXECUTE THE PROCEDURE
+EXEC proc_foreign_team;
+
+--SELECT ALL PRIMARY KEY
+	SELECT constraint_name
+	FROM user_constraints
+	WHERE constraint_name
+	LIKE 'FK%'; 
+--5 rows returned
+
+
+------------------------------**********4********------------------------
+--CREATING A PROCEDURE NAMED proc_staff
+CREATE OR REPLACE PROCEDURE proc_staff IS
+vc_staff_firstname staff.staff_firstname%TYPE :='AMRIT';
+vc_staff_surname staff.staff_surname%TYPE := 'THAPA';
+BEGIN
+	INSERT INTO staff(staff_id,staff_firstname,staff_surname)
+	VALUES(seq_staff.NEXTVAL,vc_staff_firstname,vc_staff_surname);
+	END proc_staff;
+/
+SHOW ERRORS
+
+
+
+-------------------*****************5*****************----------------------------------
+--CREATING PROCEDURE NAMED proc_update_staff
+CREATE OR REPLACE PROCEDURE proc_update_staff IS
+vn_staff_id staff.staff_id%TYPE;
+BEGIN 
+	SELECT seq_staff.CURRVAL
+	INTO vn_staff_id
+	FROM DUAL;
+	
+	UPDATE staff SET staff_firstname ='SAMI'
+	WHERE staff_id =vn_staff_id;
+	
+END proc_update_staff;
+/
+SHOW ERRORS 
+
+
+
+-----------------------------------6***************--------------------------
+--CREATING A PROCEDURE NAMED proc_delete_staff
+CREATE OR REPLACE PROCEDURE proc_delete_staff IS
+vn_staff_id staff.staff_id%TYPE;
+BEGIN
+	SELECT seq_staff.CURRVAL
+	INTO vn_staff_id
+	FROM DUAL;
+	
+	DELETE FROM staff
+	WHERE staff_id=vn_staff_id;
+	
+END proc_delete_staff;
+/
+SHOW ERRORS;
+--procedure created sucessfully
+
+
+
+
+------------------------------7******************---------------------------------
+--CREATING PROCEDURE TO GET THE SALARY OF THE STAFF
+
+CREATE OR REPLACE PROCEDURE proc_get_user_salary IS
+vn_staff NUMBER(11) := 1000;
+vc_username VARCHAR2(20);
+vn_salary NUMBER(8,2);
+vn_ceilsalary NUMBER(10);
+vn_floorsalary NUMBER(10);
+vn_roundsalary NUMBER(10);
+vn_truncatesalary NUMBER(10);
+vn_length NUMBER(30);
+vn_counter NUMBER(30) :=3;
+BEGIN
+SELECT COUNT(*) INTO vn_length FROM staff;
+
+DBMS_OUTPUT.PUT_LINE('Username Salary    Ceil     Floor    Round    Truncate');
+	LOOP
+	SELECT staff_salary INTO vn_salary FROM staff WHERE staff_id = vn_staff;
+	SELECT CEIL(vn_salary) INTO vn_ceilsalary FROM staff WHERE staff_id = vn_staff;
+	SELECT FLOOR(vn_salary) INTO vn_floorsalary FROM staff WHERE staff_id = vn_staff;
+	SELECT ROUND(vn_salary) INTO vn_roundsalary FROM staff WHERE staff_id = vn_staff;
+	SELECT TRUNC(vn_salary) INTO vn_truncatesalary FROM staff WHERE staff_id = vn_staff;
+	SELECT CONCAT(SUBSTR(INITCAP(TRIM(TRAILING ' ' FROM staff_firstname)),1,2),SUBSTR(INITCAP(staff_surname),1,5))
+	INTO vc_username
+	FROM staff 
+	WHERE staff_id = vn_staff;
+	
+	--START THE LOOP
+	--CONDITION FOR TERMINATE THE LOOP
+		EXIT WHEN vn_counter = vn_length;
+		DBMS_OUTPUT.PUT_LINE(vc_username || '  ' || vn_salary || '   '|| vn_ceilsalary || '     '|| vn_floorsalary || '   ' || vn_roundsalary || '  ' || vn_truncatesalary); 
+		
+		
+		
+		vn_staff := vn_staff+2;
+		vn_length := vn_length-1;
+	END LOOP;--END OF LOOP
+END;
+/
+--Procedure created.
+SHOW ERRORS;
+--no errors
+
+-----8---------
+--CREATING UNNAMED PROCEDURE USING LOOP
+DECLARE
+	vn_length NUMBER(2);
+	vn_counter NUMBER(3) := 1;
+	vc_firstname VARCHAR2(20) := 'ANUJ';
+	vc_surname VARCHAR2(20) := 'MAGAR';
+
+BEGIN
+	vn_length := LENGTH(vc_firstname);
+	--START THE LOOP
+	LOOP
+	--LOOP TERMINATION CONDITION
+		EXIT WHEN vn_counter>vn_length;
+		DBMS_OUTPUT.PUT_LINE(SUBSTR(vc_firstname, vn_counter, 1));
+		vn_counter := vn_counter + 1;
+	--END OF LOOP
+	END LOOP;
+	--DISPLAY SURNAME
+	DBMS_OUTPUT.PUT_LINE(vc_surname);
+--END OF PROGRAMME
+END;
+/
+
+-----------------------------------------9*******************--------------------
+--CREATING PROCEDURE TO DISPLAY DETAILS OF STAFF
+CREATE OR REPLACE PROCEDURE proc_display_staff(in_id staff.staff_id%TYPE)IS
+vc_name staff.staff_firstname%TYPE;
+vc_lastname staff.staff_surname%TYPE;
+vc_gender staff.staff_gender%TYPE;
+vd_date staff.staff_hire_date%TYPE;
+vn_salary staff.staff_salary%TYPE;
+
+BEGIN 
+	SELECT staff_firstname INTO vc_name FROM staff WHERE staff_id =in_id;
+	SELECT staff_surname INTO vc_lastname FROM staff WHERE staff_id =in_id;
+	SELECT staff_gender INTO vc_gender FROM staff WHERE staff_id =in_id;
+	SELECT staff_hire_date INTO vd_date FROM staff WHERE staff_id =in_id;
+	SELECT staff_salary INTO vn_salary FROM staff WHERE staff_id =in_id;
+	DBMS_OUTPUT.PUT_LINE('The details of staff with id ' ||in_id || ' is: ' || vc_name || ' '|| vc_lastname ||' gender is: '|| vc_gender ||' and the date of birth is: '|| vd_date ||' and salary is: '|| vn_salary);
+	END proc_display_staff;
+	/
+SHOW ERRORS;
+
+
+
+-------------------------**************10****************-------------------
+
+--CHECKING THE STATUS OF THE STAFF TABLE
+DESC staff;
+
+SELECT staff_id,staff_firstname,staff_surname ,staff_hire_date,staff_dob
+FROM staff;
+
+--CREATING PROCEDURE NAMED proc_insert_staff
+CREATE OR REPLACE PROCEDURE proc_insert_staff(in_staff_firstname VARCHAR2,in_staff_surname VARCHAR2,in_staff_hire_date DATE,in_staff_dob DATE) IS
+vc_firstname staff.staff_firstname%TYPE;
+vc_surname staff.staff_surname%TYPE;
+vd_hire_date staff.staff_hire_date%TYPE;
+vd_dob staff.staff_hire_date%TYPE;
+vc_command VARCHAR2(1000);
+BEGIN 
+	SELECT in_staff_firstname INTO vc_firstname FROM DUAL;
+	SELECT in_staff_surname INTO vc_surname FROM DUAL;
+	SELECT in_staff_hire_date INTO vd_hire_date FROM DUAL;
+	SELECT in_staff_dob INTO vd_dob FROM DUAL;
+	INSERT INTO staff(staff_id,staff_firstname,staff_surname,staff_hire_date,staff_dob) 
+	VALUES(seq_staff.NEXTVAL,vc_firstname,vc_surname,vd_hire_date,vd_dob);
+	END proc_insert_staff;
+	/
+SHOW ERRORS;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

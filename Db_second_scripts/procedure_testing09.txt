@@ -1,0 +1,368 @@
+/*
+	Group No:09
+	Group Members: Anuj Budha Magar, Amrit Thapa, Pratima Dahal, Swastika Adhikari
+	Script: Procedure Testing Script
+	Module : csy2038 - Database 2
+	Module Tutor: Sangita Satyal
+	Path: @E:\DatabaseYEAR2\assignment\procedure_testing09.txt
+*/
+---1---
+--TESTING FOR UNNAMED BLOCK
+--Unamed blocked sucessfully compiled showing the title, firstname and surname 
+--OUTPUT OF THE PROCEDURE UNNAMED BLOCK
+/*
+--Title--
+M
+R
+S
+--Firstname--
+P
+R
+A
+T
+I
+M
+A
+--Surname--
+D
+A
+H
+A
+L
+
+--PL/SQL procedure successfully completed.
+*/
+
+------2---
+/*UNNAMED BLOCK 
+--RETURNS THE NAME OF STAFF WITH PARTICULAR ID
+Name: PRATIMA
+PL/SQL procedure successfully completed.
+*/
+
+
+-----3------
+--TESTING
+--SELECT ALL TABLE NAME FROM TAB
+SELECT TNAME FROM TAB;
+--7 ROWS RETURNED
+
+--EXECUTE THE PROCEDURE
+EXEC proc_create_team;
+
+--SELECT ALL TABLE NAME FROM TAB
+SELECT TNAME FROM TAB;
+--8 ROWS RETURNED
+
+----4---
+--TESTING
+--SELECT ALL PRIMARY KEY
+	SELECT constraint_name
+	FROM user_constraints
+	WHERE constraint_name
+	LIKE 'PK%'; 
+--5 rows returned
+
+--EXECUTE THE PROCEDURE
+EXEC proc_primary_team;
+
+--SELECT ALL PRIMARY KEY
+	SELECT constraint_name
+	FROM user_constraints
+	WHERE constraint_name
+	LIKE 'PK%'; 
+--6 rows returned
+
+------5-------
+/* TESTING PROCEDURE
+*/
+
+--CHECKING THE STATUS OF THE STAFF TABLE
+DESC staff;
+
+/*OUTPUT
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ STAFF_ID                                  NOT NULL NUMBER(11)
+ STAFF_TITLE                                        VARCHAR2(5)
+ STAFF_FIRSTNAME                                    VARCHAR2(30)
+ STAFF_SURNAME                                      VARCHAR2(30)
+ STAFF_CONTACT                                      CONTACT_VARRAY_TYPE
+ STAFF_ADDRESS                                      REF OF ADDRESS_TYPE
+ SOCIAL_MEDIA_USED                                  SOCIAL_MEDIA_TABLE_TYPE
+ STAFF_GENDER                                       CHAR(1)
+ STAFF_BLOOD_GROUP                                  CHAR(3)
+ STAFF_HIRE_DATE                                    DATE
+ STAFF_SALARY                                       NUMBER(8,2)
+ STAFF_DOB                                          DATE
+
+ */
+ 
+SELECT staff_id,staff_firstname,staff_surname 
+FROM staff;
+
+/*10 rows selected
+  STAFF_ID STAFF_FIRSTNAME                STAFF_SURNAME
+---------- ------------------------------ ------------------------------
+      1088 ARYAN                          KARKI
+      1094 RANEET                         KUNWAR
+      1000 PRATIMA                        DAHAL
+      1002 SWASTIKA                       ADHIKARI
+      1004 NITU                           DAS
+      1006 DIKSHYA                        GHALE
+      1008 SARENA                         DAHAL
+      1010 CHRIS                          HEMSWORTH
+      1016 ANUJA                          MAGAR
+      1042 AMRIT                          THAPA
+*/
+
+--EXECUTING proc_staff
+EXEC proc_staff;
+--PL/SQL procedure successfully completed.
+
+--VIEWING THE PROCEDURE TO SEE IF THE DATA IS INSERTED OR NOT
+SELECT staff_id,staff_firstname,staff_surname 
+FROM staff;
+/* 11 rows selected
+
+  STAFF_ID STAFF_FIRSTNAME                STAFF_SURNAME
+---------- ------------------------------ ------------------------------
+      1088 ARYAN                          KARKI
+      1094 RANEET                         KUNWAR
+      1000 PRATIMA                        DAHAL
+      1002 SWASTIKA                       ADHIKARI
+      1004 NITU                           DAS
+      1006 DIKSHYA                        GHALE
+      1008 SARENA                         DAHAL
+      1010 CHRIS                          HEMSWORTH
+      1016 ANUJA                          MAGAR
+      1042 AMRIT                          THAPA
+      1120 AMRIT                          THAPA
+*/
+
+-----5-----
+
+--VIEWING WHETHER THE PROCEDURE IS UPDATED OR NOT
+SELECT staff_id,staff_firstname,staff_surname 
+FROM staff;
+
+/*OUTPUT
+  STAFF_ID STAFF_FIRSTNAME                STAFF_SURNAME
+---------- ------------------------------ ------------------------------
+      1088 ARYAN                          KARKI
+      1094 RANEET                         KUNWAR
+      1000 PRATIMA                        DAHAL
+      1002 SWASTIKA                       ADHIKARI
+      1004 NITU                           DAS
+      1006 DIKSHYA                        GHALE
+      1008 SARENA                         DAHAL
+      1010 CHRIS                          HEMSWORTH
+      1016 ANUJA                          MAGAR
+      1042 AMRIT                          THAPA
+      1120 AMRIT                          THAPA
+
+11 rows selected.
+*/
+
+
+--EXECUTING THE PROCEDURE proc_update_staff
+EXEC proc_update_staff;
+
+
+--VIEWING WHETHER THE PROCEDURE IS UPDATED OR NOT
+SELECT staff_id,staff_firstname,staff_surname 
+FROM staff;
+/*procedure is updated
+  STAFF_ID STAFF_FIRSTNAME                STAFF_SURNAME
+---------- ------------------------------ ------------------------------
+      1088 ARYAN                          KARKI
+      1094 RANEET                         KUNWAR
+      1000 PRATIMA                        DAHAL
+      1002 SWASTIKA                       ADHIKARI
+      1004 NITU                           DAS
+      1006 DIKSHYA                        GHALE
+      1008 SARENA                         DAHAL
+      1010 CHRIS                          HEMSWORTH
+      1016 ANUJA                          MAGAR
+      1042 AMRIT                          THAPA
+      1120 SAMI                           THAPA
+
+11 rows selected.
+*/
+
+----6-----
+/*TEST proc_delete_staff
+*/
+--CHECKING THE STATUS OF STAFF TABLE
+DESC staff;
+
+SELECT staff_id,staff_firstname,staff_surname 
+FROM staff;
+/*
+  STAFF_ID STAFF_FIRSTNAME                STAFF_SURNAME
+---------- ------------------------------ ------------------------------
+      1088 ARYAN                          KARKI
+      1094 RANEET                         KUNWAR
+      1000 PRATIMA                        DAHAL
+      1002 SWASTIKA                       ADHIKARI
+      1004 NITU                           DAS
+      1006 DIKSHYA                        GHALE
+      1008 SARENA                         DAHAL
+      1010 CHRIS                          HEMSWORTH
+      1016 ANUJA                          MAGAR
+      1042 AMRIT                          THAPA
+      1120 SAMI                           THAPA
+
+11 rows selected.
+*/
+
+--EXECUTING proc_delete_staff
+EXEC proc_delete_staff;
+--PL/SQL procedure successfully completed.
+
+--CHECKING THE STATUS OF THE STAFF TABLE
+SELECT staff_id,staff_firstname,staff_surname 
+FROM staff;
+
+/*
+  STAFF_ID STAFF_FIRSTNAME                STAFF_SURNAME
+---------- ------------------------------ ------------------------------
+      1088 ARYAN                          KARKI
+      1094 RANEET                         KUNWAR
+      1000 PRATIMA                        DAHAL
+      1002 SWASTIKA                       ADHIKARI
+      1004 NITU                           DAS
+      1006 DIKSHYA                        GHALE
+      1008 SARENA                         DAHAL
+      1010 CHRIS                          HEMSWORTH
+      1016 ANUJA                          MAGAR
+      1042 AMRIT                          THAPA
+
+10 rows selected.
+*/
+
+-----7-----
+/*TESTING proc_get_user_salary*/
+
+--VIEWING THE SALARY OF THE STAFF
+SELECT staff_salary FROM staff;
+
+/*OUTPUT
+
+STAFF_SALARY
+------------
+       20002
+       30003
+       50005
+       40004
+       60006
+       50005
+       60006
+7 rows selected.
+*/
+
+--EXECUTING proc_get_user_salary
+EXEC proc_get_user_salary;
+/*
+Username Salary    Ceil     Floor    Round    Truncate
+PrDahal  20000   20000     20000   20000  20000
+SwAdhik  30000   30000     30000   30000  30000
+NiDas  50000   50000     50000   50000  50000
+DiGhale  40000   40000     40000   40000  40000
+
+PL/SQL procedure successfully completed.
+*/
+--VIEWING THE SALARY OF THE STAFF
+SELECT staff_salary FROM staff;
+/*
+STAFF_SALARY
+------------
+       20000
+       30000
+       50000
+       40000
+       60000
+       50000
+       60000
+
+7 rows selected.
+*/
+
+-------8--------
+/*
+A
+N
+U
+J
+MAGAR
+*/
+
+
+-------9--------
+-------**********TESTING******************-----------
+SELECT staff_firstname
+FROM staff;
+/*
+STAFF_FIRSTNAME
+------------------------------
+PRATIMA
+SWASTIKA
+NITU
+DIKSHYA
+SARENA
+CHRIS
+SCARLETT
+
+7 rows selected.
+*/
+
+
+---EXECUTING THE ABOVE PROCEDURE
+EXEC proc_display_staff(1000);
+--procedure is executed giving the details of staff id 1000
+/*
+The details of staff with id 1000 is: PRATIMA DAHAL gender is: F and the date of
+birth is: 18-FEB-15 and salary is: 20000
+*/
+
+
+------10-------
+set long 2000
+set linesize 200
+EXEC proc_insert_staff('AMRIT','THAPA','01-FEB-2000','01-FEB-1980');
+--procedure executed sucessfully
+	
+--CHECKING THE STATUS OF THE STAFF TABLE
+DESC staff;
+
+--VIEWING WHETHER THE DATA IS  INSERTED OR NOT
+SELECT staff_id,staff_firstname,staff_surname ,staff_hire_date,staff_dob
+FROM staff;
+/*
+
+  STAFF_ID STAFF_FIRSTNAME                STAFF_SURNAME                  STAFF_HIR STAFF_DOB
+---------- ------------------------------ ------------------------------ --------- ---------
+      1000 PRATIMA                        DAHAL                          18-FEB-15 19-MAR-95
+      1002 SWASTIKA                       ADHIKARI                       20-APR-14 20-APR-94
+      1004 NITU                           DAS                            18-FEB-16 01-NOV-93
+      1006 DIKSHYA                        GHALE                          23-NOV-17 19-DEC-92
+      1008 SARENA                         DAHAL                          29-DEC-15 12-MAR-91
+      1010 CHRIS                          HEMSWORTH                      19-APR-19
+      1012 SCARLETT                       EVANS                          19-APR-19
+      1014 AMRIT                          THAPA                          01-FEB-00 01-FEB-80
+      1016 AMRIT                          THAPA                          01-FEB-00 01-FEB-80
+      1018 AMRIT                          THAPA                          01-FEB-00 01-FEB-80
+
+10 rows selected.
+*/
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,79 @@
+
+/*
+	Group No:09
+	Group Members: Anuj Budha Magar, Amrit Thapa, Pratima Dahal, Swastika Adhikari
+	Script: Package Creation Script
+	Module : csy2038 - Database 2
+	Module Tutor: Sangita Satyal
+	Path: @E:\DatabaseYEAR2\assignment\package_09.txt
+*/
+
+--PACKAGE TO SHOW STAFF DETAILS BY EMAIL
+
+--PACKAGE HEADER
+CREATE OR REPLACE PACKAGE pkg_search_staff AS
+	FUNCTION func_search_by_email_cursor(in_email VARCHAR2) RETURN NUMBER;
+	PROCEDURE proc_search_by_email_cursor(in_email VARCHAR2);
+END pkg_search_staff;
+/
+--PACKAGE BODY
+CREATE OR REPLACE PACKAGE BODY pkg_search_staff AS
+	vn_staff_id staff.staff_id%TYPE;
+	vc_staff_firstname staff.staff_firstname%TYPE;
+	vc_staff_surname staff.staff_surname%TYPE;
+	vc_staff_gender staff.staff_gender%TYPE;
+	exep_no_user EXCEPTION; --EXCEPTION
+	CURSOR cur_staff_id IS
+		SELECT s.staff_id staff_id,c.email email FROM staff s, table(s.staff_contact) c;
+	rec_cur_id cur_staff_id%ROWTYPE;
+--FUNCTION TO GET USER ID BASED ON EMAIL
+FUNCTION func_search_by_email_cursor(in_email VARCHAR2)
+RETURN NUMBER IS
+	BEGIN 	
+		IF cur_staff_id %ISOPEN THEN
+    		CLOSE cur_staff_id ;
+   		END IF;
+		OPEN cur_staff_id;
+		FETCH cur_staff_id INTO rec_cur_id;
+		--IF THERE IS NO DATA IN STAFF TABLE
+		IF cur_staff_id%NOTFOUND THEN
+			RETURN 0;
+		ELSE
+		--WHILE LOOP TO SCROLL THROUGH ALL DATA
+			WHILE cur_staff_id%FOUND LOOP
+				IF rec_cur_id.email = in_email THEN
+					RETURN rec_cur_id.staff_id;
+				ELSE RETURN 0;
+				END IF;
+			END LOOP;
+		END IF;
+	CLOSE cur_staff_id;
+	END;
+--PROCEDURE WITHIN PACKAGE TO DISPLAY INFORMATION 
+PROCEDURE proc_search_by_email_cursor(in_email VARCHAR2) IS	
+	BEGIN
+		vn_staff_id := func_search_by_email_cursor(in_email);
+		IF (vn_staff_id=0) THEN
+			RAISE exep_no_user;
+		ELSE
+			SELECT staff_firstname INTO vc_staff_firstname FROM staff WHERE staff_id = vn_staff_id;
+			SELECT staff_surname INTO vc_staff_surname FROM staff WHERE staff_id = vn_staff_id;
+			SELECT staff_gender INTO vc_staff_gender FROM staff WHERE staff_id = vn_staff_id;
+			DBMS_OUTPUT.PUT_LINE('Staff_id: '|| vn_staff_id ||' FIRSTNAME: ' || vc_staff_firstname || ' SURNAME: ' || vc_staff_surname);
+		END IF;
+	EXCEPTION
+		WHEN exep_no_user THEN
+			DBMS_OUTPUT.PUT_LINE('NOT FOUND');
+	END;
+END pkg_search_staff;
+/
+SHOW ERRORS;
+--DISPLAYING PACKAGE NAME
+SELECT OBJECT_NAME FROM USER_OBJECTS WHERE OBJECT_NAME LIKE 'PKG_%';
+
+--TESTING OF PACKAGE
+EXEC pkg_search_staff.proc_search_by_email_cursor('PRATIMA@GMAIL.COM');
+--STAFF INFORMATION DISPLAYED
+--TESTING PACKAGE USING INVALID DATA
+EXEC pkg_search_staff.proc_search_by_email_cursor('ANOOZ@GMAIL.COM');
+--RELATIVE INFORMATION RETURNED

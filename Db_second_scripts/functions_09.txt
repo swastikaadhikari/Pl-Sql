@@ -1,0 +1,198 @@
+/*
+	Group No:09
+	Group Members: Anuj Budha Magar, Amrit Thapa, Pratima Dahal, Swastika Adhikari
+	Script: Alters Script
+	Module : csy2038 - Database 2
+	Module Tutor: Sangita Satyal
+	Path: @E:\DatabaseYEAR2\assignment\alters_09.txt
+*/
+
+----------------------------------------1******************-----------------------------
+--DESCRIBING THE STRUCTURE OF FESTIVAL TABLE
+DESC festivals;
+
+--CREATING FUNCTION NAMED func_festivals
+CREATE OR REPLACE FUNCTION func_festivals
+RETURN NUMBER IS 
+vn_festivals NUMBER(3);
+BEGIN
+	SELECT COUNT(*)
+	INTO vn_festivals
+	FROM festivals;
+	RETURN vn_festivals;
+	END func_festivals;
+/
+SHOW ERRORS
+--FUNCTION CREATED WITH NO ERRORS
+
+--CREATING PROCEDURE TO RUN ABOVE FUNCTION FUNC_FESTIVALS
+CREATE OR REPLACE PROCEDURE proc_festivals IS
+vc_festival_name VARCHAR2(50);
+
+BEGIN 
+	vc_festival_name:=func_festivals;
+	DBMS_OUTPUT.PUT_LINE('The number of festivals is' || func_festivals);
+	END proc_festivals;
+	/
+SHOW ERRORS;
+
+--EXECUTING THE PROCEDURE proc_festivals
+EXEC proc_festivals;
+
+
+
+------------------------------2*************************----------------------------------
+
+--DESCRIBING THE TABLE  STAFF
+DESC staff;
+
+--VIEWING THE DATA OF  STAFF
+SELECT * FROM staff;
+
+--CREATING FUNCTION TO GET AVERAGE AGE OF STAFF
+CREATE OR REPLACE FUNCTION func_get_avg_age_of_staff
+RETURN NUMBER IS
+today DATE;
+vn_avg_age NUMBER(3);
+BEGIN
+SELECT sysdate INTO today from dual;
+
+SELECT AVG(FLOOR(today-staff_dob) / 365.2425) INTO vn_avg_age FROM staff
+
+WHERE staff_dob IS NOT NULL;
+RETURN vn_avg_age;
+END func_get_avg_age_of_staff;
+/
+SHOW ERRORS;
+--FUNCTION CREATED WITH NO ERRORS
+
+--CREATING PROCEDURE TO TEST WHETHER FUNCTION WORKES OR NOT
+CREATE OR REPLACE PROCEDURE proc_avg_age_staff IS
+vn_avg_age NUMBER(3);
+BEGIN
+	vn_avg_age:=func_get_avg_age_of_staff;
+	DBMS_OUTPUT.PUT_LINE('THE AVERAGE AGE OF STAFF IS ' || vn_avg_age || ' YEARS.');
+	END proc_avg_age_staff;
+/
+SHOW ERRORS;
+--PROCEDURE CREATED WITH NO ERRORS
+
+EXEC proc_avg_age_staff;
+--PROCEDURE SUCESSFULLY CREATED SHOWING THE AVERAGE AGE OF STAFF
+
+
+----------------------------3*******************************-------------------------------------------------
+
+--CREATE A FUNCTION TO CREATE A USERNAME FROM THE FIRST NAME AND THE SURNAME OF THE TABLE STAFF
+CREATE OR REPLACE FUNCTION func_staff(in_staff_id NUMBER) RETURN VARCHAR2 IS
+	vc_stff_un VARCHAR2(10);
+BEGIN
+	SELECT CONCAT(SUBSTR(staff_firstname,1,2),SUBSTR(staff_surname,1,5))
+	INTO vc_stff_un
+	FROM staff
+	WHERE staff_id = in_staff_id;
+	RETURN vc_stff_un;
+END func_staff;
+/
+
+--FIND THE ERRORS
+	SHOW ERRORS;
+	
+---------------------
+--CREATE A PROCEDURE FOR A FUNCTION func_staff TO EXECUTE THE FUNCTION
+CREATE OR REPLACE PROCEDURE proc_staff(in_staff_id staff.staff_id%TYPE) IS
+	vc_staff_username VARCHAR2(30);
+--vc prefix is used for the new variable because we are storing varchar2(string) data
+BEGIN
+	vc_staff_username := func_staff(in_staff_id);
+	DBMS_OUTPUT.PUT_LINE ('The staff with user id ' || in_staff_id || ' has a username '||vc_staff_username);
+END proc_staff;--END OF THE PROCEDURE 
+/
+
+EXEC proc_staff(1000);
+--procedure sucessfully executed showing the staff id with with username.
+
+--TESTING
+-- 1)BEFORE EXECUTING THE PROCEDURE
+SELECT * FROM STAFF WHERE staff_id = 1000;
+--1 rows return 
+
+-- 2) EXECUTING THE PROCEDURE PROC_STAFF
+	EXEC PROC_STAFF(1000);
+	--1 rows returned with message There staff with user id 1000 has a username PRDAHAL
+	
+-- 3) AFTER EXECUTING THE PROCEDURE
+	SELECT * FROM STAFF;
+-- 1 rows returned
+
+-------------------------------4***********************---------------------------------------------------------------------
+--CREATE A FUNCTION TO CREATE A USERNAME FROM THE FIRST NAME AND THE SURNAME OF THE TABLE STAFF
+CREATE OR REPLACE FUNCTION func_staff_check_gender(in_staff_id NUMBER) RETURN VARCHAR2 IS
+	vc_stff_gender staff.staff_gender%TYPE;
+BEGIN
+	SELECT staff_gender INTO vc_stff_gender FROM staff
+	WHERE staff_id = in_staff_id;
+	RETURN vc_stff_gender;
+END func_staff_check_gender;
+/
+
+--FIND THE ERRORS
+	SHOW ERRORS;
+	--No errors
+
+--CREATE A PROCEDURE FOR A FUNCTION func_staff TO EXECUTE THE FUNCTION
+CREATE OR REPLACE PROCEDURE proc_staff_gender(in_staff_id staff.staff_id%TYPE) IS
+	vc_staff_gender staff.staff_gender%TYPE;
+--vc prefix is used for the new variable because we are storing varchar2(string) data
+BEGIN
+	vc_staff_gender := func_staff_check_gender(in_staff_id);
+	CASE
+	WHEN vc_staff_gender = 'M' THEN DBMS_OUTPUT.PUT_LINE('STAFF IS MALE');
+	WHEN vc_staff_gender = 'F' THEN DBMS_OUTPUT.PUT_LINE('STAFF IS FEMALE');
+	ELSE DBMS_OUTPUT.PUT_LINE('OTHERS');
+	END CASE;
+END proc_staff_gender;--END OF THE PROCEDURE 
+/
+
+EXEC proc_staff_gender(1000);
+--PROCEDURE SUCESSFULLY EXECUTED
+-----------------------------5----------------------------------------------------
+--create a function func_instructor_ct which return no of instructor
+CREATE OR REPLACE FUNCTION func_total_salary RETURN NUMBER IS
+	vn_staff_salary NUMBER(10,2);
+BEGIN
+	SELECT SUM(staff_salary)
+	INTO vn_staff_salary
+	FROM staff;
+	RETURN vn_staff_salary;
+END func_total_salary;
+/
+--FUNCTION CREATED
+
+--VIEW ERRORS
+SHOW ERRORS;
+
+--CREATE THE PROCEDURE TO TEST THE FUNCTION WHICH PRINT THE NO OF INSTRUCTOR
+CREATE OR REPLACE PROCEDURE proc_salary_func IS
+	vn_total_staff_salary NUMBER(10,2);
+--vN prefix is used for the new variable because we are storing NUMBER data
+BEGIN
+	vn_total_staff_salary := func_total_salary;
+	DBMS_OUTPUT.PUT_LINE ('The  total salary of staff is '|| vn_total_staff_salary );
+END proc_salary_func;--END OF THE PROCEDURE 
+/ 
+
+--testing
+-- 1) Select without execute
+SELECT * FROM staff;
+--8 rows returned
+
+-- 2) Execute the procedure
+EXEC proc_salary_func;
+
+-- 3)Select after execute
+SELECT * FROM staff;
+--8 rows returned
+
+
+

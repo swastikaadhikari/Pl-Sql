@@ -1,0 +1,75 @@
+/*
+	Group No:09
+	Group Members: Anuj Budha Magar, Amrit Thapa, Pratima Dahal, Swastika Adhikari
+	Script: Procedure Testing Script
+	Module : csy2038 - Database 2
+	Module Tutor: Sangita Satyal
+	Path: @E:\DatabaseYEAR2\assignment\function_testing_09.txt
+*/
+
+-----1------
+--EXECUTING THE PROCEDURE proc_festivals
+EXEC proc_festivals;
+
+--OUTPUT 
+/*
+The number of festivals is 5
+
+PL/SQL procedure successfully completed.
+*/
+
+---------2----------------
+--EXECUTING THE PROCEDURE proc_avg_age_staff
+EXEC proc_avg_age_staff;
+/*
+THE AVERAGE AGE OF STAFF IS 31 YEARS.
+
+PL/SQL procedure successfully completed.
+*/
+
+-------3-------
+--TESTING PROC_STAFF
+-- 1)BEFORE EXECUTING THE PROCEDURE
+SELECT * FROM STAFF WHERE staff_id = 1000;
+--1 rows return 
+
+-- 2) EXECUTING THE PROCEDURE PROC_STAFF
+	EXEC PROC_STAFF(1000);
+	--1 rows returned with message There staff with user id 1000 has a username PRDAHAL
+	
+-- 3) AFTER EXECUTING THE PROCEDURE
+	SELECT * FROM STAFF;
+-- 1 rows returned
+
+---------4------
+--TESTING proc_staff_gender
+EXEC proc_staff_gender(1000);
+
+/*
+STAFF IS FEMALE
+
+PL/SQL procedure successfully completed.
+*/
+
+------5-----
+--TESTING
+-- 1) SELECT WITHOUT EXECUTE
+SELECT * FROM staff;
+--8 rows returned
+
+-- 2) EXECUTE THE PROCEDURE
+EXEC proc_salary_func;
+/*
+The  total salary of staff is 310000
+
+PL/SQL procedure successfully completed.
+
+*/
+-- 3)SELECT AFTER EXECUTE
+SELECT * FROM staff;
+--8 rows returned
+
+
+
+
+

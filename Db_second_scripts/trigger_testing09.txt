@@ -1,0 +1,82 @@
+/*
+	Group No:09
+	Group Members: Anuj Budha Magar, Amrit Thapa, Pratima Dahal, Swastika Adhikari
+	Script: Trigger Testing Script
+	Module : csy2038 - Database 2
+	Module Tutor: Sangita Satyal
+	Path: @E:\DatabaseYEAR2\assignment\trigger_testing09.txt
+*/
+
+-----------1----------
+--TESTING FOR TRIGGER
+SELECT * FROM staff;
+--8 rows selected
+
+--INSERTING THE VALUES IN STAFF
+INSERT INTO staff(staff_id,staff_firstname,staff_surname,staff_dob)
+VALUES (seq_staff.NEXTVAL,'ARYAN','KARKI','01-JAN-2006');
+--NO VALUE INSERTED
+INSERT INTO staff(staff_id,staff_firstname,staff_surname,staff_dob)
+VALUES (seq_staff.NEXTVAL,'ARYAN','KARKI','01-JAN-2026');
+--SMALL MISTAKE
+INSERT INTO staff(staff_id,staff_firstname,staff_surname,staff_dob)
+VALUES (seq_staff.NEXTVAL,'ARYAN','KARKI','01-JAN-1996');
+
+SELECT * FROM staff;
+--9 rows selected
+
+-------2----------
+--TESTING
+--1)BEFORE EXECUTION
+SELECT * FROM hr_event;
+--NO ROWS SELECTED
+--2)DISCONNECT FROM SQL PLUS
+DISC;
+--3)CONNECT SCHEMA
+CONNECT dbs/babulal
+
+--4)SELECT FROM HR_EVENT TABLE
+SELECT * FROM hr_event;
+--1 ROWS SELECTED 
+
+-----------3------------------
+--TESTING
+desc staff
+--1)CHECK ON OPERATION INSERT
+	INSERT INTO staff(staff_id,staff_firstname,staff_surname,staff_dob)
+	VALUES (seq_staff.NEXTVAL,'RANEET','KUNWAR','01-JAN-1996');
+	--ONE LINE INSERTED BY PRATIMA ON 17-APR-19
+	--1 ROW CREATED
+	
+--2)CHECK ON OPERATION UPDATE
+	UPDATE staff
+	SET staff_gender = 'M'
+	WHERE staff_id = 1092;
+	--ONE LINE UPDATED BY PRATIMA ON 17-APR-19
+	--1 ROW UPDATED
+	
+--3)CHECK ON OPERATION DELETE
+	DELETE staff WHERE staff_id=1092;
+	--ONE LINE DELETED BY PRATIMA ON 17-APR-19
+	--1 ROW DELETED
+
+------------------4--------------
+--CREATING NEW TABLE
+CREATE TABLE jname(dob DATE);
+
+--OUTPUT
+--one row CREATE...... ON 19-APR-19
+
+--UPDATE TABLE
+ALTER TABLE jname
+ADD(salary NUMBER(2,3));
+--OUTPUT
+--one row ALTER...... ON 19-APR-19
+
+--DROPPPING TABLE 
+DROP TABLE jname;
+--OUTPUT
+--one row DROP...... ON 19-APR-19
+
+
+----5-----

@@ -1,0 +1,146 @@
+/*
+	Group No:09
+	Group Members: Anuj Budha Magar, Amrit Thapa, Pratima Dahal, Swastika Adhikari
+	Script: Drop Script
+	Module : csy2038 - Database 2
+	Module Tutor: Sangita Satyal
+	Path: @F:\DatabaseYEAR2\assignment\drop_09.txt
+*/
+
+--DROPPING TRIGGER
+DROP TRIGGER trig_staff_age;
+DROP TRIGGER trig_login_hr;
+DROP TRIGGER trig_operation_staff;
+DROP TRIGGER trig_audit_tr;
+DROP TRIGGER trig_message;
+
+
+--DROPPING CURSOR
+DROP PROCEDURE proc_fes_imp_cursor;
+DROP PROCEDURE proc_imp_cursor;
+DROP PROCEDURE proc_exp_cursor;
+DROP PROCEDURE proc_exp_staff_salary;
+
+
+
+--DROPPING FUNCTION
+DROP FUNCTION func_festivals;
+DROP FUNCTION func_get_staff_age;
+DROP FUNCTION func_get_avg_age_of_staff;
+DROP FUNCTION func_staff;
+DROP FUNCTION func_staff_check_gender;
+DROP FUNCTION func_total_salary;
+
+--DROPPING PACKAGE
+DROP PACKAGE pkg_search_staff;	
+
+
+
+--DROPPING PROCEDURE
+DROP PROCEDURE proc_create_team;
+DROP PROCEDURE proc_primary_team;
+DROP PROCEDURE proc_foreign_team;
+DROP PROCEDURE proc_update_staff;
+DROP PROCEDURE proc_delete_staff;
+DROP PROCEDURE proc_get_user_salary;
+DROP PROCEDURE proc_display_staff;
+DROP PROCEDURE proc_insert_staff;
+DROP PROCEDURE proc_festivals;
+DROP PROCEDURE proc_staff_age;
+DROP PROCEDURE proc_avg_age_staff;
+DROP PROCEDURE proc_staff;
+DROP PROCEDURE proc_staff_gender;
+DROP PROCEDURE proc_salary_func;
+ 
+ --DROPPING CONSTRAINTS
+
+ --DROPPING FOREIGN KEYS
+ ALTER TABLE festivals
+ DROP CONSTRAINT fk_f_locations;
+
+ ALTER TABLE staff
+ DROP CONSTRAINT fk_s_staff;
+
+ ALTER TABLE team
+ DROP CONSTRAINT fk_t_staff;
+ 
+ ALTER TABLE festivals
+ DROP CONSTRAINT fk_f_festival_nature;
+ 
+ ALTER TABLE festival_staff
+ DROP CONSTRAINT fk_f_staff;
+ 
+ ALTER TABLE festival_staff
+ DROP CONSTRAINT fk_f_festivals;
+
+--DROPPING UNIQUE CONSTRAINT
+ ALTER TABLE festival_nature
+ DROP CONSTRAINT uc_festival_nature;
+ 
+ --DROPPING CHECK CONSTRAINT
+ ALTER TABLE staff
+ DROP CONSTRAINT ck_gender;
+ 
+ ALTER TABLE staff
+ DROP CONSTRAINT ck_staff_title;
+ 
+ ALTER TABLE staff
+ DROP CONSTRAINT ck_staff_firstname;
+ 
+ ALTER TABLE staff
+ DROP CONSTRAINT ck_staff_surname;
+ 
+ ALTER TABLE festival_nature
+ DROP CONSTRAINT ck_festival_type; 
+ 
+ --DROPPING PRIMARY KEYS
+ ALTER TABLE locations
+ DROP CONSTRAINT pk_locations;
+	
+ ALTER TABLE team
+ DROP CONSTRAINT pk_team; 
+
+ ALTER TABLE festival_nature
+ DROP CONSTRAINT pk_festival_nature;
+ 
+ ALTER TABLE festivals
+ DROP CONSTRAINT pk_festivals;
+
+ ALTER TABLE festival_staff
+ DROP CONSTRAINT pk_festival_staff;
+
+ ALTER TABLE festivals
+ DROP CONSTRAINT ck_festival_name;
+ 
+ ALTER TABLE staff
+ DROP CONSTRAINT pk_staff;
+ 
+ --DROPPING TABLE 
+ DROP TABLE LOCATIONS;
+ DROP TABLE FESTIVAL_NATURE;
+ DROP TABLE FESTIVALS;
+ DROP TABLE STAFF;
+ DROP TABLE FESTIVAL_STAFF;
+DROP TABLE team;
+ 
+ --DROPPING TYPE
+DROP TYPE social_media_table_type;
+DROP TYPE contact_varray_type;
+DROP TYPE contact_type;
+DROP TABLE addresses;
+DROP TYPE social_media_type;
+DROP TYPE address_type;
+DROP TYPE team_varray_type;
+DROP TABLE hr_event;
+
+--DROPPING SEQUENCES
+DROP SEQUENCE seq_locations;
+DROP SEQUENCE seq_festival_nature;
+DROP SEQUENCE seq_staff;
+
+PURGE RECYCLEBIN;
+
+
+
+ 
+ 

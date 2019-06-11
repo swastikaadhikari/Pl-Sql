@@ -1,0 +1,119 @@
+/*
+	Group No:09
+	Group Members: Anuj Budha Magar, Amrit Thapa, Pratima Dahal, Swastika Adhikari
+	Script: Cursor Script
+	Module : csy2038 - Database 2
+	Module Tutor: Sangita Satyal
+	Path: @E:\DatabaseYEAR2\assignment\cursor_09.txt
+*/
+
+--ENABLING SERVEROUTPUT TO DISPLAY SERVER MESSAGES
+SET SERVEROUTPUT ON;
+
+-------**********1*************--------
+---implicit cursor
+ CREATE OR REPLACE PROCEDURE proc_fes_imp_cursor(in_festival_name festivals.festival_name%TYPE) IS
+ BEGIN
+	DELETE FROM festivals WHERE festival_name = in_festival_name;
+	
+END proc_fes_imp_cursor;
+/
+
+SHOW ERRORS
+
+
+------3---------
+--CREATING IMPLICIT CURSER
+--THIS CURSOR 
+CREATE OR REPLACE PROCEDURE proc_imp_cursor(in_festival_name festivals.festival_name %TYPE) IS
+BEGIN
+	DELETE FROM festivals WHERE festival_name =in_festival_name ;
+	IF(SQL%FOUND)THEN
+		DBMS_OUTPUT.PUT_LINE('DELETED ' || in_festival_name );
+	ELSE
+		DBMS_OUTPUT.PUT_LINE('NO SUCH FESTIVAL');
+		
+	END IF;
+END proc_imp_cursor;
+/
+
+SHOW ERRORS;
+--NO ERRORS
+
+---------------------------------4**************************--------------------------
+
+--CREATING EXPLICIT CURSER
+--THIS CURSOR RETURNS FIRSTNAME AND THE SALARY OF STAFF WHO HAVE SAME  OR ABOVE SALARY AS SPECIFIED 
+CREATE OR REPLACE PROCEDURE proc_exp_cursor(in_staff staff.staff_salary%TYPE) IS
+
+	CURSOR cur_staff_salary IS
+	SELECT staff_firstname,staff_salary FROM staff WHERE staff_salary>=in_staff;
+vn_rows NUMBER(3):=0;
+BEGIN
+	DBMS_OUTPUT.PUT_LINE('STAFF   SALARY  IS');
+	DBMS_OUTPUT.PUT_LINE('--------------------------');
+	FOR rec_cur_staff_salary IN cur_staff_salary LOOP
+	    DBMS_OUTPUT.PUT_LINE(cur_staff_salary%ROWCOUNT||'    '||rec_cur_staff_salary.staff_firstname||'    '||rec_cur_staff_salary.staff_salary);
+		vn_rows:=cur_staff_salary%ROWCOUNT;
+		END LOOP;
+		
+		DBMS_OUTPUT.PUT_LINE('THERE ARE '||vn_rows||' ROWS');
+	END proc_exp_cursor;
+/
+SHOW ERRORS
+--CREATED
+
+-----------------------------5****************************------------------------------
+
+
+--CREATING PROCEDURE THAT DISPLAYS THE STAFF SALARY AND EXCEEDS A SPECIFIED VALUE, PASSED IN
+CREATE OR REPLACE PROCEDURE proc_exp_staff_salary(in_staff_salary staff.staff_salary%TYPE) IS
+CURSOR cur_salary IS
+SELECT staff_id, staff_firstname, staff_salary FROM staff WHERE staff_salary>= in_staff_salary;
+
+rec_cur_salary cur_salary%ROWTYPE;
+
+BEGIN
+	OPEN cur_salary;
+	FETCH cur_salary INTO rec_cur_salary;
+
+	IF cur_salary%NOTFOUND THEN
+			DBMS_OUTPUT.PUT_LINE('NO SUCH STAFF WITH SUCH SALARY FOUND');
+	ELSE
+		WHILE cur_salary%FOUND LOOP
+		DBMS_OUTPUT.PUT_LINE(rec_cur_salary.staff_id||'    '||rec_cur_salary.staff_firstname||'     
+		
+		'||rec_cur_salary.staff_salary);
+		FETCH cur_salary INTO rec_cur_salary;
+		
+		END LOOP;
+	END IF;
+END proc_exp_staff_salary;
+/
+SHOW ERRORS
+
+-----------------************6**************------------------------
+
+--CREATE CURSOR TO SHOW THE FESTIVAL NAME , AND OCCURING DATE
+CREATE OR REPLACE PROCEDURE proc_exp_cursor(in_festival_nature_id festival_staff.festival_nature_id%TYPE) IS
+
+	CURSOR cur_festival IS
+	SELECT festival_name,occuring_date FROM festivals WHERE festival_nature_id =in_festival_nature_id ;
+vn_rows NUMBER(3):=0;
+BEGIN
+	DBMS_OUTPUT.PUT_LINE('SN   COURSES  COST');
+	DBMS_OUTPUT.PUT_LINE('---------------------------------');
+	FOR rec_cur_festival IN cur_festival LOOP
+		DBMS_OUTPUT.PUT_LINE(cur_festival%ROWCOUNT||'    '||rec_cur_festival.festival_name||'     '||rec_cur_festival.occuring_date);
+		vn_rows:=cur_festival%ROWCOUNT;
+		END LOOP;
+				
+		DBMS_OUTPUT.PUT_LINE('THERE ARE '||vn_rows||' ROWS');
+	END proc_exp_cursor;
+/
+
+
+
+
+
+

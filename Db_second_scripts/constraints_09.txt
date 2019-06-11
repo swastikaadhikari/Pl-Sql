@@ -1,0 +1,138 @@
+/*
+	Group No:09
+	Group Members: Anuj Budha Magar, Amrit Thapa, Pratima Dahal, Swastika Adhikari
+	Script: Alter  Script
+	Module : csy2038 - Database 2
+	Module Tutor: Sangita Satyal
+	Path: @F:\DatabaseYEAR2\assignment\constraints_09.txt;
+*/
+
+--ALTERING STAFF TABLE TO ADD NEW COLUMN staff_gender
+ALTER TABLE staff
+ADD (staff_gender CHAR);
+
+--ALTERING STAFF TABLE TO ADD NEW COLUMN staff_blood_group
+ALTER TABLE staff
+ADD (staff_blood_group CHAR(3));
+
+--ALTERING STAFF TABLE TO ADD NEW COLUMN staff_hire_date
+ALTER TABLE staff
+ADD (staff_hire_date DATE DEFAULT SYSDATE);
+
+--ALTERING STAFF TABLE TO ADD NEW COLUMN staff_salary
+ALTER TABLE staff
+ADD (staff_salary NUMBER(8,2));
+
+--ALTERING STAFF TABLE TO ADD NEW COLUMN staff_dob
+ALTER TABLE staff
+ADD (staff_dob DATE );
+
+--ALTERING STAFF TABLE TO ADD NEW COLUMN leader
+ALTER TABLE STAFF
+ADD (leader NUMBER(11));
+
+
+--ADDING DEFAULT VALUES
+ALTER TABLE staff
+MODIFY staff_gender DEFAULT 'M';
+
+ALTER TABLE festivals
+MODIFY occuring_date DEFAULT SYSDATE;
+ 
+--Primary key
+--for locations
+ALTER TABLE locations
+ADD CONSTRAINT pk_locations
+PRIMARY KEY(location_id);
+
+ALTER TABLE festival_nature
+ADD CONSTRAINT pk_festival_nature
+PRIMARY KEY(festival_nature_id);
+
+ALTER TABLE festivals
+ADD CONSTRAINT pk_festivals
+PRIMARY KEY(location_id,festival_nature_id);
+
+ALTER TABLE staff
+ADD CONSTRAINT pk_staff
+PRIMARY KEY(staff_id);
+
+ALTER TABLE festival_staff
+ADD CONSTRAINT pk_festival_staff
+PRIMARY KEY(staff_id,location_id, festival_nature_id);
+
+--FOREIGN KEY
+ALTER TABLE festivals
+ADD CONSTRAINT fk_f_locations
+FOREIGN KEY(location_id)
+REFERENCES locations(location_id);
+
+ALTER TABLE festivals
+ADD CONSTRAINT fk_f_festival_nature
+FOREIGN KEY(festival_nature_id)
+REFERENCES festival_nature(festival_nature_id);
+
+ALTER TABLE festival_staff
+ADD CONSTRAINT fk_f_staff
+FOREIGN KEY(staff_id)
+REFERENCES staff(staff_id);
+
+ALTER TABLE festival_staff
+ADD CONSTRAINT fk_f_festivals
+FOREIGN KEY(location_id,festival_nature_id)
+REFERENCES festivals(location_id,festival_nature_id);
+
+
+--UNIQUE KEY
+ALTER TABLE festival_nature
+ADD CONSTRAINT uc_festival_nature
+UNIQUE(festival_type);
+
+
+--CHECK CONSTRAINT
+ALTER TABLE staff
+ADD CONSTRAINT ck_gender
+CHECK(staff_gender IN ('M','F'));
+
+ALTER TABLE staff
+ADD CONSTRAINT ck_staff_title
+CHECK(staff_title IN ('MR','MRS','DR','ER','MISS'));
+
+ALTER TABLE staff
+ADD CONSTRAINT ck_staff_firstname
+CHECK (staff_firstname = UPPER(staff_firstname));
+
+ALTER TABLE staff
+ADD CONSTRAINT ck_staff_surname
+CHECK (staff_surname = UPPER(staff_surname));
+
+ALTER TABLE festival_nature
+ADD CONSTRAINT ck_festival_type
+CHECK(festival_type =UPPER(festival_type));
+
+ALTER TABLE festivals
+ADD CONSTRAINT ck_festival_name
+CHECK(festival_name =UPPER(festival_name));
+
+
+
+
+--FOREIGN KEY
+ALTER TABLE staff 
+ADD CONSTRAINT fk_s_staff
+FOREIGN KEY (leader)
+REFERENCES staff(staff_id);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
